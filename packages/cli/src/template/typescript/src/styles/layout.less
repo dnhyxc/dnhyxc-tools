@@ -1,0 +1,42 @@
+/*
+ * @Description: 布局公共样式
+ * @Author: dnh
+ * @Date: 2022-06-13 11:38:15
+ * @LastEditors: dnh
+ * @FilePath: \styles\layout.less
+ */
+.container {
+  height: calc(100vh - 50px);
+
+  .wrap {
+    padding: 6px 0 6px 6px;
+    height: calc(100% - 47px);
+
+    .content {
+      background-color: #fff;
+      height: 100%;
+      border-radius: 5px;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+  }
+}
+
+/*整个滚动条*/
+::-webkit-scrollbar {
+  width: 5px;
+  height: 7px;
+  background-color: #fff;
+}
+
+/*定义滚动条轨道*/
+::-webkit-scrollbar-track {
+  background-color: #fff;
+}
+
+/*定义滑块*/
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}

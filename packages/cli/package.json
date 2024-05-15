@@ -1,0 +1,48 @@
+{
+  "name": "dnhyxc",
+  "version": "0.0.0",
+  "description": "dnhyxc 自定义脚手架",
+  "main": "dnhyxc.cjs",
+  "typings": "dnhyxc.d.ts",
+  "bin": {
+    "dnhyxc": "dnhyxc.cjs"
+  },
+  "scripts": {
+    "start": "rollup -c rollup.config.js && node './dist/index.js'",
+    "dev": "rollup -c rollup.config.js -w",
+    "build": "rimraf dist && vitest run && rollup -c rollup.config.js",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "pnpm",
+    "monorepo",
+    "plugins"
+  ],
+  "author": {
+    "name": "dnhyxc",
+    "github": "https://github.com/dnhyxc"
+  },
+  "license": "ISC",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/prompts": "^2.4.9",
+    "vitest": "^1.2.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "chalk": "^4.1.2",
+    "commander": "^12.0.0",
+    "figlet": "^1.7.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^8.2.0",
+    "ora": "^5.1.0",
+    "prompts": "^2.4.2",
+    "shelljs": "^0.8.5"
+  }
+}

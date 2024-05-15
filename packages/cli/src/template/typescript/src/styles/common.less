@@ -1,0 +1,26 @@
+// 是网页整体变成灰色
+.htmlToGray() {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+  filter: url("data:image/svg+xml;utf8,#grayscale");
+  filter: progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);
+  -webkit-filter: grayscale(1);
+}
+
+// 双击不选中文字
+.clickNoSelectText {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -khtml-user-select: none;
+  user-select: none;
+}
+
+@btnColor: linear-gradient(to left, #c8e4f0, #bad0f3);
+@btnHoverColor: linear-gradient(to right, #39dfeb, #8cb4f5);
+@menubgc: linear-gradient(to right, #9cd7f1, #8cb4f5);
+@treebgc: linear-gradient(to left, #c8e4f0, #bad0f3);
+@boxShadow: 0 2px 5px 2px #5378f0;

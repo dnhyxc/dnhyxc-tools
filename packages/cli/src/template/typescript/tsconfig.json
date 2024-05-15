@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "noImplicitAny": true, // 不允许隐式any类型
+    "module": "esnext", // 模块引入方式
+    "target": "es5", // 打包后编译成什么形式
+    "jsx": "react-jsx", // 引入react
+    "allowJs": true, // 在ts文件中允许引入js文件
+    "moduleResolution": "node",
+    "baseUrl": ".", // 引入模块的方式
+    "paths": {
+      "@/*": ["src/*"],
+      "@styles/*": ["src/styles/*"]
+    }
+  },
+  "include": ["./src/**/*", "./src/styles/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
