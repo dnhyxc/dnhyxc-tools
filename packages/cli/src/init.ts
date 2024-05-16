@@ -58,7 +58,7 @@ export const init = async (name: string, option: Options) => {
         },
         {
           name: 'needsTypeScript',
-          type: 'toggle',
+          type: template ? null : 'toggle',
           message: '是否使用 typescript?',
           initial: false,
           active: 'no',
@@ -96,7 +96,6 @@ export const init = async (name: string, option: Options) => {
       }
     );
   } catch (cancelled) {
-    console.log(cancelled.message);
     process.exit(1);
   }
 

@@ -1,5 +1,11 @@
 # dnhyxc-cli
 
+## 0.0.8
+
+### Patch Changes
+
+- 优化
+
 ## 0.0.7
 
 ### Patch Changes

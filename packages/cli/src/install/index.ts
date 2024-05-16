@@ -13,7 +13,6 @@ const getScript = (
 ) => {
   if (!pkg) {
     const pkgs = fs.readFileSync(`${projectPath}/package.json`, 'utf8');
-    console.log(JSON.parse(pkgs), 'pkgs');
     pkg = pkgs && JSON.parse(pkgs);
   }
   console.log(logs.info, chalk.green(`cd ${projectName}`));

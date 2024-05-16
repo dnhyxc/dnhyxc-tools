@@ -6,14 +6,14 @@ import { Options, init } from '@/init';
 import { templates } from '@/constants';
 import { logs, checkProjectName } from '@/utils';
 
-program.version('0.0.7', '-v, --version');
+program.version('0.0.8', '-v, --version');
 
 program
   .name('dnhyxc')
   .description('自定义脚手架')
   .usage('<command> [options]')
   .on('--help', () => {
-    console.log(`\r\nRun ${chalk.cyan('cli <command> --help')} for detailed usage of given command\r\n`);
+    console.log(`\r\nRun ${chalk.cyan('dnhyxc <command> --help')} for detailed usage of given command\r\n`);
   });
 
 program
