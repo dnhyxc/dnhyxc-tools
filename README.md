@@ -2,7 +2,7 @@
 
 dnhyxc 脚手架工具，用于快速搭建项目模板。
 
-#### 全局安装 `dnhyxc`：
+#### 全局安装 `dnhyxc` 使用方式
 
 ```yaml
 npm install dnhyxc -g
@@ -18,7 +18,7 @@ dnhyxc create <projectName>
 dnhyxc create my-project
 ```
 
-#### 局部安装 `dnhyxc`
+#### 局部安装 `dnhyxc` 使用方式
 
 ```yaml
 npm install dnhyxc -D
