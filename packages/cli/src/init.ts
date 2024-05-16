@@ -1,7 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import prompts from 'prompts';
-import { verifyDir, removeDir } from '@/utils';
+import chalk from 'chalk';
+import { verifyDir, removeDir, logs } from '@/utils';
 import { renderTemplate } from '@/render';
 import { install, manualInstall } from '@/install';
 
@@ -122,7 +123,7 @@ export const init = async (name: string, option: Options) => {
   }
 
   if (needsOverwrite && !restoreProjectName.trim()) {
-    console.log('项目名称冲突或有误，请修改项目名称后再试');
+    console.log(logs.info, chalk.yellowBright('项目名称冲突或有误，请修改项目名称后再试'));
     return;
   }
 
