@@ -3,3 +3,4 @@ node_modules
 !.prettierrc.js
 components.d.ts
 auto-imports.d.ts
+packages/cli/src/templates/**
