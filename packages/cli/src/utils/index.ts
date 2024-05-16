@@ -87,18 +87,24 @@ export const getExecScript = (projectPath: string) => {
 // 删除指定文件夹
 export const removeDir = async (dir: string) => {
   const spinner = ora({
-    text: chalk.yellowBright(`正在删除文件夹: ${ chalk.cyan(dir) }`),
+    text: chalk.yellowBright(`正在删除文件夹: ${chalk.cyan(dir)}`)
   }).start();
 
   try {
     await fs.remove(dir);
-    spinner.succeed(chalk.greenBright(`删除文件夹: ${ chalk.cyan(dir) } 成功`));
+    spinner.succeed(chalk.greenBright(`删除文件夹: ${chalk.cyan(dir)} 成功`));
   } catch (err) {
     console.log(err);
-    spinner.fail(chalk.redBright(`删除文件夹: ${ chalk.cyan(dir) } 失败`));
+    spinner.fail(chalk.redBright(`删除文件夹: ${chalk.cyan(dir)} 失败`));
   }
 };
 
 export const verifyDir = (dir: string) => {
   return fs.existsSync(dir);
+};
+
+// 校验项目名称
+export const checkProjectName = (projectName: string) => {
+  const res = /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(projectName);
+  return res;
 };
