@@ -1,5 +1,11 @@
 # dnhyxc-cli
 
+## 0.0.9
+
+### Patch Changes
+
+- 增加husky选项
+
 ## 0.0.8
 
 ### Patch Changes
