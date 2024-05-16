@@ -1,0 +1,32 @@
+{
+  "name": "dnhyxc-vite-plugins",
+  "version": "1.0.0",
+  "description": "vite plugins 插件包",
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "dev": "rollup -c rollup.config.js -w",
+    "build": "rimraf dist && vitest run && rollup -c rollup.config.js",
+    "test": "vitest run"
+  },
+  "keywords": [
+    "pnpm",
+    "monorepo",
+    "plugins"
+  ],
+  "author": {
+    "name": "dnhyxc",
+    "github": "https://github.com/dnhyxc"
+  },
+  "license": "ISC",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "devDependencies": {
+    "vitest": "^1.2.0"
+  }
+}

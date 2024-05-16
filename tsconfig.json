@@ -2,6 +2,8 @@
   "include": [
     "./packages/cli/src/*",
     "./packages/cli/index.ts",
+    "./packages/vite-plugins/src/*",
+    "./packages/vite-plugins/index.ts",
     "./src/*",
     "./index.ts"
   ],
@@ -15,17 +17,12 @@
     "noUnusedLocals": true,
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ],
+    "typeRoots": ["./types", "./node_modules/@types"],
     "baseUrl": ".",
     // 引入模块的方式
     // 路径别名配置
     "paths": {
-      "@/*": [
-        "./packages/cli/src/*"
-      ]
+      "@/*": ["./packages/cli/src/*", "./packages/vite-plugins/src/*"]
     }
   }
 }

@@ -20,7 +20,24 @@ const __filenameNew = fileURLToPath(import.meta.url);
 const __dirnameNew = path.dirname(__filenameNew);
 const getPath = (_path) => path.resolve(__dirnameNew, _path);
 
-export const buildConfig = ({packageName}) => {
+export const buildConfig = ({ packageName }) => {
+
+  const output = packageName === 'dnhyxc' ? [
+    // 输出支持 commonjs 的包
+    { file: 'dnhyxc.cjs', format: 'cjs' },
+  ] : [
+    // 输出支持 es6 语法的包
+    { file: 'dist/index.esm.js', format: 'es' },
+    // 输出支持 commonjs 的包
+    { file: 'dist/index.cjs', format: 'cjs' },
+    // 输出支持 umd 格式的包，以便通过 script 标签直接引用
+    {
+      format: 'umd',
+      file: 'dist/index.js',
+      name: packageName
+    }
+  ];
+
   return [
     {
       input: './index.ts',
@@ -51,7 +68,8 @@ export const buildConfig = ({packageName}) => {
         // 配置路径别名
         alias({
           entries: [
-            {find: '@', replacement: '../packages/cli/src'},
+            { find: '@', replacement: '../packages/cli/src' },
+            { find: '@', replacement: '../packages/vite-plugins/src' }
           ]
         }),
         // 配置eslint
@@ -62,10 +80,7 @@ export const buildConfig = ({packageName}) => {
           exclude: ['node_modules/**', 'dist/**']
         })
       ],
-      output: [
-        // 输出支持 commonjs 的包
-        {file: 'dnhyxc.cjs', format: 'cjs'},
-      ]
+      output
     },
     // 单独生成声明文件
     {
@@ -73,7 +88,7 @@ export const buildConfig = ({packageName}) => {
       plugins: [
         dts(),
         alias({
-          entries: [{find: '@', replacement: './src'}]
+          entries: [{ find: '@', replacement: './src' }]
         })
       ],
       output: {
