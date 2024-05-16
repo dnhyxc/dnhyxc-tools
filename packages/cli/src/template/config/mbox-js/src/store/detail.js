@@ -5,7 +5,7 @@
  * @LastEditors: dnh
  * @FilePath: \src\store\detail.ts
  */
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable } from 'mobx';
 
 
 class DetailStore {
@@ -15,7 +15,7 @@ class DetailStore {
 
   list = [
     {
-      name: "initName",
+      name: 'initName',
       id: 1,
     },
   ];
@@ -23,15 +23,15 @@ class DetailStore {
   initList() {
     this.list = [
       {
-        name: "name1",
+        name: 'name1',
         id: 2,
       },
       {
-        name: "name2",
+        name: 'name2',
         id: 3,
       },
       {
-        name: "name3",
+        name: 'name3',
         id: 4,
       },
     ];

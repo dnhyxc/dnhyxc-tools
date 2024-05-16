@@ -1,18 +1,18 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable } from 'mobx';
 
 class CreateMobx {
   constructor() {
     makeAutoObservable(this);
   }
 
-  mackdown = "";
+  mackdown = '';
 
   createMackdown(value) {
     this.mackdown = value;
   }
 
   clearMackdown() {
-    this.mackdown = "";
+    this.mackdown = '';
   }
 }
 

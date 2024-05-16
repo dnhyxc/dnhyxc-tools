@@ -6,10 +6,10 @@
  * @FilePath: \example\react\mobx\src\store\index.ts
  * @LastEditTime: 2022-06-10 14:52:26
  */
-import { createContext, useContext } from "react";
-import addMobx from "./add";
-import detailMobx from "./detail";
-import createMobx from "./create";
+import { createContext, useContext } from 'react';
+import addMobx from './add';
+import detailMobx from './detail';
+import createMobx from './create';
 
 class RootStore {
   add = addMobx;

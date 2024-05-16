@@ -6,7 +6,7 @@
  * @FilePath: \example\react\mobx\src\store\add.ts
  * @LastEditTime: 2022-06-10 14:44:45
  */
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, runInAction } from 'mobx';
 
 class AddMobx {
   constructor() {
