@@ -7,7 +7,7 @@
     "release": "pnpm changeset publish",
     "publish": "pnpm --filter=./packages/* run build && pnpm changeset && pnpm changeset version && pnpm changeset publish",
     "prepare": "husky install",
-    "test": "npx eslint ./packages  --ext ts,vue,js --fix --ignore-pattern packages/cli/src/template/**",
+    "test": "npx eslint ./packages --ext ts,vue,js --ignore-pattern packages/cli/src/template",
     "cmt": "git-cz",
     "commit": "git-cz"
   },
