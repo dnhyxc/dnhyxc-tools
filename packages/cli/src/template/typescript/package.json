@@ -6,7 +6,6 @@
     "start": "webpack serve --config ./config/webpack.dev.config.js",
     "build": "rimraf dist && webpack --config ./config/webpack.prod.config.js",
     "eject": "react-scripts eject",
-    "prepare": "husky install",
     "test": "npx eslint ./src --ext ts,tsx --fix"
   },
   "dependencies": {
@@ -62,7 +61,6 @@
     "css-minimizer-webpack-plugin": "^4.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
-    "husky": "^8.0.1",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
     "mini-css-extract-plugin": "^2.6.0",

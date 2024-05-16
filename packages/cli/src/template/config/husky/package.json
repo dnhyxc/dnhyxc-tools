@@ -1,0 +1,7 @@
+{
+  "name": "dnhyxc-husky",
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "husky": "^8.0.1"
+}
