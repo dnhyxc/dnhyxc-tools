@@ -16,6 +16,7 @@ interface Result {
   needsTypeScript: boolean;
   needsMbox: boolean;
   needsEslint: boolean;
+  needsHusky: boolean;
   needsInstall: boolean;
 }
 
@@ -81,6 +82,14 @@ export const init = async (name: string, option: Options) => {
           inactive: 'yes'
         },
         {
+          name: 'needsHusky',
+          type: 'toggle',
+          message: '是否使用 husky?',
+          initial: false,
+          active: 'no',
+          inactive: 'yes'
+        },
+        {
           name: 'needsInstall',
           type: 'toggle',
           message: '是否自动安装依赖?',
@@ -99,7 +108,8 @@ export const init = async (name: string, option: Options) => {
     process.exit(1);
   }
 
-  const { needsOverwrite, restoreProjectName, needsTypeScript, needsMbox, needsEslint, needsInstall } = result;
+  const { needsOverwrite, restoreProjectName, needsTypeScript, needsMbox, needsEslint, needsHusky, needsInstall } =
+    result;
 
   // 重新设置项目名称及路径
   if (restoreProjectName) {
@@ -146,6 +156,10 @@ export const init = async (name: string, option: Options) => {
 
   if (!needsEslint) {
     render('config/eslint');
+  }
+
+  if (!needsHusky) {
+    render('config/husky');
   }
 
   if (!needsInstall) {
