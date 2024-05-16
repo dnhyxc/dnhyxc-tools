@@ -1,6 +1,6 @@
 {
-  "name": "react-template",
-  "version": "0.1.0",
+  "name": "dnhyxc-typesctipt-template",
+  "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "webpack serve --config ./config/webpack.dev.config.js",

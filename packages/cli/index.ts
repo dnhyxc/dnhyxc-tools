@@ -3,18 +3,12 @@
 import { program } from 'commander'; // 解析命令行参
 import chalk from 'chalk'; // 终端标题美化
 import { logs } from '@/utils';
-import { init } from '@/init';
-import pkg from './package.json';
+import { Options, init } from '@/init';
 
-interface Options {
-  template: string;
-  force: string;
-}
-
-program.version(pkg.version, '-v, --version');
+program.version('0.0.1', '-v, --version');
 
 program
-  .name("cli")
+  .name("dnhyxc")
   .description("自定义脚手架")
   .usage("<command> [options]")
   .on('--help', () => {
@@ -37,7 +31,6 @@ program
   .description('创建新项目')
   .option('-t, --template [template]', '输入模板名称创建项目')
   .option('-f, --force', '强制覆盖本地同名项目')
-  .option('-i, --ignore', '忽略项目相关描述,快速创建项目')
   .action(programCreateCallback);
 
 // 必须写在所有的 program 语句之后，否则上述 program 语句不会执行

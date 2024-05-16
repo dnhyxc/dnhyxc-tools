@@ -5,9 +5,9 @@ import { verifyDir, removeDir } from '@/utils';
 import { renderTemplate } from '@/render';
 import { install, manualInstall } from '@/install';
 
-interface Options {
+export interface Options {
   template: string;
-  force: string;
+  force: boolean;
 }
 
 interface Result {
@@ -85,8 +85,6 @@ export const init = async (name: string, option: Options) => {
     projectPath = path.join(process.cwd(), projectName);
   }
 
-  const templateRoot = path.resolve(__dirname, 'template');
-
   if (!needsOverwrite && fs.existsSync(projectPath)) {
     await removeDir(projectPath);
   }
@@ -103,7 +101,7 @@ export const init = async (name: string, option: Options) => {
   };
 
   const render = (templateName: string) => {
-    const templateDir = path.resolve(templateRoot, templateName);
+    const templateDir = path.resolve(__dirname, `./src/template/${ templateName }`);
     renderTemplate({ templateDir, projectPath, projectName, callback });
   };
 

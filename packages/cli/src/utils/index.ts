@@ -87,16 +87,15 @@ export const getExecScript = (projectPath: string) => {
 // 删除指定文件夹
 export const removeDir = async (dir: string) => {
   const spinner = ora({
-    text: `正在删除文件夹${ chalk.cyan(dir) }`,
-    color: "yellow",
+    text: chalk.yellowBright(`正在删除文件夹: ${ chalk.cyan(dir) }`),
   }).start();
 
   try {
     await fs.remove(dir);
-    spinner.succeed(chalk.greenBright(`删除文件夹${ chalk.cyan(dir) }成功`));
+    spinner.succeed(chalk.greenBright(`删除文件夹: ${ chalk.cyan(dir) } 成功`));
   } catch (err) {
     console.log(err);
-    spinner.fail(chalk.redBright(`删除文件夹${ chalk.cyan(dir) }失败`));
+    spinner.fail(chalk.redBright(`删除文件夹: ${ chalk.cyan(dir) } 失败`));
   }
 };
 

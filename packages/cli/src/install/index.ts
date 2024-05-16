@@ -8,15 +8,15 @@ import { logs, getExecScript } from '@/utils';
 const getScript = (projectName: string, pkg: { [key: string]: any }, execScript: string | null = null) => {
   console.log(logs.info, chalk.green(`cd ${ projectName }`));
   execScript && console.log(logs.info, chalk.green(`执行 ${ execScript } 下载依赖`));
-  if (pkg.scripts.dev) {
+  if (pkg?.scripts?.dev) {
     console.log(logs.info, chalk.green(`运行 npm run dev 启动项目`));
     return;
   }
-  if (pkg.scripts.start) {
+  if (pkg?.scripts?.start) {
     console.log(logs.info, chalk.green(`运行 npm start 启动项目`));
     return;
   }
-  if (pkg.scripts.serve) {
+  if (pkg?.scripts?.serve) {
     console.log(logs.info, chalk.green(`运行 npm run serve 启动项目`));
     return;
   }

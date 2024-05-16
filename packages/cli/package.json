@@ -1,6 +1,6 @@
 {
   "name": "dnhyxc",
-  "version": "0.0.0",
+  "version": "0.0.6",
   "description": "dnhyxc 自定义脚手架",
   "main": "dnhyxc.cjs",
   "typings": "dnhyxc.d.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "start": "rollup -c rollup.config.js && node './dist/index.js'",
     "dev": "rollup -c rollup.config.js -w",
-    "build": "rimraf dist && vitest run && rollup -c rollup.config.js",
+    "build": "rimraf dnhyxc.cjs && rimraf dnhyxc.d.ts && vitest run && rollup -c rollup.config.js",
     "test": "vitest run"
   },
   "keywords": [
@@ -25,7 +25,9 @@
   "license": "ISC",
   "type": "module",
   "files": [
-    "dist",
+    "dnhyxc.cjs",
+    "dnhyxc.d.ts",
+    "src/template/**",
     "README.md"
   ],
   "devDependencies": {

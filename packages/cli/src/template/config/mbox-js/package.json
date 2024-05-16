@@ -1,4 +1,6 @@
 {
+  "name": "dnhyxc-mbox-js",
+  "version": "0.0.0",
   "dependencies": {
     "mobx": "^6.6.0",
     "mobx-react": "^7.5.0"

@@ -1,7 +1,7 @@
 {
-  "name": "dnhyxc-cli",
+  "name": "dnhyxc-tools",
   "version": "0.0.0",
-  "description": "自定义脚手架",
+  "description": "工具库",
   "scripts": {
     "build": "pnpm -r --filter=./packages/* run build",
     "release": "pnpm changeset publish",
