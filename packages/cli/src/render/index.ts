@@ -7,10 +7,9 @@ interface RenderTemplateParams {
   templateDir: string;
   projectPath: string;
   projectName: string;
-  callback: (params: { pkg: { [key: string]: string } }) => void;
 }
 
-export const renderTemplate = ({ templateDir, projectPath, projectName, callback }: RenderTemplateParams) => {
+export const renderTemplate = ({ templateDir, projectPath, projectName }: RenderTemplateParams) => {
   const stats = fs.statSync(templateDir);
 
   // 判断是否是文件夹
@@ -24,8 +23,7 @@ export const renderTemplate = ({ templateDir, projectPath, projectName, callback
       renderTemplate({
         templateDir: path.resolve(templateDir, file),
         projectPath: path.resolve(projectPath, file),
-        projectName,
-        callback
+        projectName
       });
     }
     return;
@@ -38,9 +36,6 @@ export const renderTemplate = ({ templateDir, projectPath, projectName, callback
     const newPackage = JSON.parse(fs.readFileSync(templateDir, 'utf8'));
     // deepMerge 重新给 package.json 赋值，并且进行排序
     const pkg = dependenciesSort(deepMergePkg(existedPackage, newPackage));
-    pkg.name = projectName;
-    pkg.version = '0.0.0';
-    callback({ pkg });
     fs.writeFileSync(projectPath, JSON.stringify(pkg, null, 2) + '\n');
     return;
   }

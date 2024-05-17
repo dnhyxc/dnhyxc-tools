@@ -1,9 +1,8 @@
 {
   "name": "dnhyxc",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "dnhyxc 自定义脚手架",
   "main": "dnhyxc.cjs",
-  "typings": "dnhyxc.d.ts",
   "bin": {
     "dnhyxc": "dnhyxc.cjs"
   },

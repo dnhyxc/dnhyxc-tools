@@ -21,10 +21,6 @@ interface Result {
   needsInstall: boolean;
 }
 
-interface Pkg {
-  [key: string]: any;
-}
-
 export const init = async (name: string, option: Options) => {
   const { template, force } = option;
 
@@ -127,15 +123,9 @@ export const init = async (name: string, option: Options) => {
     return;
   }
 
-  let newPkg: Pkg | null = null;
-
-  const callback = (values: { pkg: Pkg }) => {
-    newPkg = values.pkg;
-  };
-
   const render = (templateName: string) => {
     const templateDir = path.resolve(__dirname, `./src/template/${templateName}`);
-    renderTemplate({ templateDir, projectPath, projectName, callback });
+    renderTemplate({ templateDir, projectPath, projectName });
   };
 
   // 取反表示选择的是 yes
@@ -164,11 +154,11 @@ export const init = async (name: string, option: Options) => {
   }
 
   // 将pkg.json重命名为package.json
-  fileRename(projectPath);
+  const pkg = (await fileRename(projectPath, projectName)) as { [key: string]: any };
 
   if (!needsInstall) {
-    await install(projectPath, projectName, newPkg as unknown as Pkg);
+    await install(projectPath, projectName, pkg);
   } else {
-    manualInstall(projectPath, projectName, newPkg as unknown as Pkg);
+    manualInstall(projectPath, projectName, pkg);
   }
 };

@@ -6,7 +6,7 @@ import { Options, init } from '@/init';
 import { templates } from '@/constants';
 import { logs, checkProjectName } from '@/utils';
 
-program.version('0.0.10', '-v, --version');
+program.version('0.0.11', '-v, --version');
 
 program
   .name('dnhyxc')

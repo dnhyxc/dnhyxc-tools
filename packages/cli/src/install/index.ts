@@ -2,20 +2,10 @@ import fs from 'fs-extra';
 import { exec } from 'child_process';
 import ora from 'ora';
 import chalk from 'chalk';
-import { PACKAGE } from '@/constants';
 import { logs, getExecScript } from '@/utils';
 
 // 获取项目运行的脚本
-const getScript = (
-  projectName: string,
-  pkg: { [key: string]: any },
-  execScript: string | null = null,
-  projectPath: string
-) => {
-  if (!pkg) {
-    const pkgs = fs.readFileSync(`${projectPath}/${PACKAGE}`, 'utf8');
-    pkg = pkgs && JSON.parse(pkgs);
-  }
+const getScript = (projectName: string, execScript: string | null = null, pkg: { [key: string]: any }) => {
   console.log(logs.info, chalk.green(`cd ${projectName}`));
   execScript && console.log(logs.info, chalk.green(`执行 ${execScript} 下载依赖`));
   if (pkg?.scripts?.dev) {
@@ -45,19 +35,19 @@ export const install = async (projectPath: string, projectName: string, pkg: { [
         const hasNode_modules = fs.existsSync(`${projectPath}/node_modules`);
         if (hasNode_modules) {
           spinner.fail(chalk.yellow(`执行${execScript}自动下载依赖存在警告或者报错，请检查项目依赖下载是否有误`));
-          getScript(projectName, pkg, null, projectPath);
+          getScript(projectName, null, pkg);
         } else {
           console.log(logs.error, `${error.message}`);
           spinner.fail(chalk.red(`执行${execScript}自动下载依赖失败，请 cd ${projectName}，手动安装依赖`));
         }
       }
       spinner.succeed(chalk.green('依赖下载完成'));
-      getScript(projectName, pkg, null, projectPath);
+      getScript(projectName, null, pkg);
     });
   });
 };
 
 export const manualInstall = (projectPath: string, projectName: string, pkg: { [key: string]: any }) => {
   const execScript = getExecScript(projectPath);
-  getScript(projectName, pkg, execScript, projectPath);
+  getScript(projectName, execScript, pkg);
 };

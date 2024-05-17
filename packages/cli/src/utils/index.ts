@@ -106,13 +106,26 @@ export const verifyFile = (path: string) => {
 };
 
 // 文件重命名
-export const fileRename = (projectPath: string) => {
-  const filePath = path.join(projectPath, PKG);
-  if (verifyFile(filePath)) {
-    fs.renameSync(filePath, path.join(projectPath, PACKAGE));
-  } else {
-    console.log(logs.error, chalk.red('文件不存在'));
-  }
+export const fileRename = (projectPath: string, projectName: string) => {
+  return new Promise((resolve) => {
+    const filePath = path.join(projectPath, PKG);
+    if (verifyFile(filePath)) {
+      try {
+        const pkgs = fs.readFileSync(`${projectPath}/${PKG}`, 'utf8');
+        const pkg = pkgs && JSON.parse(pkgs);
+        pkg.name = projectName;
+        pkg.version = '0.0.0';
+        fs.writeFileSync(filePath, JSON.stringify(pkg, null, 2) + '\n');
+        fs.renameSync(filePath, path.join(projectPath, PACKAGE));
+        resolve(pkg);
+      } catch (error) {
+        console.log(logs.error, chalk.red(error));
+        process.exit(1);
+      }
+    } else {
+      console.log(logs.error, chalk.red('文件不存在'));
+    }
+  });
 };
 
 // 校验项目名称
