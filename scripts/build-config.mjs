@@ -21,6 +21,8 @@ const __dirnameNew = path.dirname(__filenameNew);
 const getPath = (_path) => path.resolve(__dirnameNew, _path);
 
 export const buildConfig = ({ packageName }) => {
+  // 将包名转化为驼峰式命名，以便通过window.packageName访问
+  packageName = packageName.replace(/-(\w)/g, (_, char) => char.toUpperCase());
 
   const output = packageName === 'dnhyxc' ? [
     // 输出支持 commonjs 的包
@@ -38,7 +40,22 @@ export const buildConfig = ({ packageName }) => {
     }
   ];
 
-  return [
+  // 声明文件打包输出配置
+  const declaration = {
+    input: './index.ts',
+    plugins: [
+      dts(),
+      alias({
+        entries: [{ find: '@', replacement: './src' }]
+      })
+    ],
+    output: {
+      format: 'esm',
+      file: 'dist/index.d.ts'
+    }
+  };
+
+  const baseConfig = [
     {
       input: './index.ts',
       plugins: [
@@ -81,20 +98,13 @@ export const buildConfig = ({ packageName }) => {
         })
       ],
       output
-    },
-    // 单独生成声明文件
-    {
-      input: './index.ts',
-      plugins: [
-        dts(),
-        alias({
-          entries: [{ find: '@', replacement: './src' }]
-        })
-      ],
-      output: {
-        format: 'esm',
-        file: 'dnhyxc.d.ts'
-      }
     }
-  ];
+  ]
+
+  // 如果不是dnhyxc脚手架包，则添加声明文件打包配置
+  if (packageName !== 'dnhyxc') {
+    baseConfig.push(declaration);
+  }
+
+  return baseConfig;
 };

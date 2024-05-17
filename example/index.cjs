@@ -1,4 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { add } = require('../packages/core/dist/index.cjs');
+const { ViteElectronBuildPlugin, ViteElectronRuntimePlugin } = require('../packages/vite-plugins/dist/index.cjs');
 
-console.log(add(12, 9), 'cjs');
+console.log(ViteElectronBuildPlugin, 'ViteElectronBuildPlugin');
+console.log(ViteElectronRuntimePlugin, 'ViteElectronRuntimePlugin');
