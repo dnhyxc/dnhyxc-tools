@@ -49,3 +49,28 @@ npx dnhyxc create my-project
 5. `dnhyxc create <projectName> -t <templateName>` 根据输入的模版创建项目。
 
 6. `dnhyxc create <projectName> -f` 强制覆盖本地同名项目。
+
+### [vite](https://www.npmjs.com/package/dnhyxc-vite-plugins) 插件
+
+这个包主要适用于 Vue + Electron 开发时用于 Vite 项目的插件。
+
+#### ViteElectronRuntimePlugin
+
+ViteElectronRuntimePlugin 这个插件主要实现了主进程及 preload 代码的打包及热更新，同时监听了 electron 是否终止，从而终止对应启动的 vite 服务及 终端 node 进程。
+
+#### ViteElectronBuildPlugin
+
+ViteElectronBuildPlugin：这个插件主要是为了防止开发者直接进行打包，而没有先使用 npm run dev 先在根目录下生成 dist 打包文件夹，从而导致 electron 打包报错。
+
+#### 具体使用方法
+
+首先通过 `npm i dnhyxc-vite-plugins -D` 安装插件。然后在 `vite.config.ts` 文件中引入插件，具体如下：
+
+```js
+import { defineConfig } from 'vite';
+import { ViteElectronBuildPlugin, ViteElectronRuntimePlugin } from 'dnhyxc-vite-plugins';
+
+export default defineConfig({
+  plugins: [ViteElectronRuntimePlugin(), ViteElectronBuildPlugin()]
+});
+```
