@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import prompts from 'prompts';
 import chalk from 'chalk';
-import { verifyDir, removeDir, logs } from '@/utils';
+import { verifyFile, removeDir, logs, fileRename } from '@/utils';
 import { renderTemplate } from '@/render';
 import { install, manualInstall } from '@/install';
 
@@ -45,7 +45,7 @@ export const init = async (name: string, option: Options) => {
         },
         {
           name: 'needsOverwrite',
-          type: () => (!verifyDir(projectPath) || force ? null : 'toggle'),
+          type: () => (!verifyFile(projectPath) || force ? null : 'toggle'),
           message: '存在相同文件夹是否强制覆盖？',
           initial: true,
           active: 'no',
@@ -162,6 +162,9 @@ export const init = async (name: string, option: Options) => {
   if (!needsHusky) {
     render('config/husky');
   }
+
+  // 将pkg.json重命名为package.json
+  fileRename(projectPath);
 
   if (!needsInstall) {
     await install(projectPath, projectName, newPkg as unknown as Pkg);

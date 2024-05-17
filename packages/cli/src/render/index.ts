@@ -1,12 +1,13 @@
 import path from 'path';
 import fs from 'fs';
-import { deepMergePkg, dependenciesSort } from '@/utils';
+import { PKG } from '@/constants';
+import { deepMergePkg, dependenciesSort, verifyFile } from '@/utils';
 
 interface RenderTemplateParams {
-  templateDir: string,
-  projectPath: string,
-  projectName: string,
-  callback: (params: { pkg: { [key: string]: string } }) => void
+  templateDir: string;
+  projectPath: string;
+  projectName: string;
+  callback: (params: { pkg: { [key: string]: string } }) => void;
 }
 
 export const renderTemplate = ({ templateDir, projectPath, projectName, callback }: RenderTemplateParams) => {
@@ -30,11 +31,7 @@ export const renderTemplate = ({ templateDir, projectPath, projectName, callback
     return;
   }
 
-  // 获取文件名称
-  const filename = path.basename(templateDir);
-
-  // fs.existsSync(dest) 判断文件是否存在
-  if (filename === 'package.json' && fs.existsSync(projectPath)) {
+  if (path.basename(templateDir) === PKG && verifyFile(projectPath)) {
     // 已经设置好的 package 内容
     const existedPackage = JSON.parse(fs.readFileSync(projectPath, 'utf8'));
     // 需要合并进入的新的 package 内容
@@ -48,6 +45,5 @@ export const renderTemplate = ({ templateDir, projectPath, projectName, callback
     return;
   }
 
-  // 将src中的内容复制到dest中
   fs.copyFileSync(templateDir, projectPath);
 };

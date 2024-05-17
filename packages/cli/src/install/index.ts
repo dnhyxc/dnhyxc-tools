@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import { exec } from 'child_process';
 import ora from 'ora';
 import chalk from 'chalk';
+import { PACKAGE } from '@/constants';
 import { logs, getExecScript } from '@/utils';
 
 // 获取项目运行的脚本
@@ -12,7 +13,7 @@ const getScript = (
   projectPath: string
 ) => {
   if (!pkg) {
-    const pkgs = fs.readFileSync(`${projectPath}/package.json`, 'utf8');
+    const pkgs = fs.readFileSync(`${projectPath}/${PACKAGE}`, 'utf8');
     pkg = pkgs && JSON.parse(pkgs);
   }
   console.log(logs.info, chalk.green(`cd ${projectName}`));
@@ -38,8 +39,8 @@ export const install = async (projectPath: string, projectName: string, pkg: { [
   return new Promise(() => {
     const execScript = getExecScript(projectPath);
     exec(`cd ${projectPath} && ${execScript}`, (error, stdout, stderr) => {
-      console.log(logs.info, `${stdout}\n`);
-      console.log(logs.error, `${stderr}`);
+      console.log(chalk.yellow(`${stdout}\n`));
+      console.log(chalk.yellow(`${stderr}`));
       if (error) {
         const hasNode_modules = fs.existsSync(`${projectPath}/node_modules`);
         if (hasNode_modules) {

@@ -2,12 +2,14 @@ import path from 'path';
 import fs from 'fs-extra';
 import ora from 'ora';
 import chalk from 'chalk';
-
-export { logs } from './logs';
+import { PKG, PACKAGE } from '@/constants';
+import { logs } from './logs';
 
 type DeepMergeParams = {
   [key: string]: any;
 };
+
+export { logs };
 
 const isObject = (val: object) => val && typeof val === 'object';
 const mergeArrayWithDedupe = (a: string[], b: string[]) => Array.from(new Set([...a, ...b]));
@@ -94,13 +96,23 @@ export const removeDir = async (dir: string) => {
     await fs.remove(dir);
     spinner.succeed(chalk.greenBright(`删除文件夹: ${chalk.cyan(dir)} 成功`));
   } catch (err) {
-    console.log(err);
     spinner.fail(chalk.redBright(`删除文件夹: ${chalk.cyan(dir)} 失败`));
   }
 };
 
-export const verifyDir = (dir: string) => {
-  return fs.existsSync(dir);
+// 校验文件是否存在
+export const verifyFile = (path: string) => {
+  return fs.existsSync(path);
+};
+
+// 文件重命名
+export const fileRename = (projectPath: string) => {
+  const filePath = path.join(projectPath, PKG);
+  if (verifyFile(filePath)) {
+    fs.renameSync(filePath, path.join(projectPath, PACKAGE));
+  } else {
+    console.log(logs.error, chalk.red('文件不存在'));
+  }
 };
 
 // 校验项目名称
