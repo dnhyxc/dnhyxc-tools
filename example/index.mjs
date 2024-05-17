@@ -1,3 +1,4 @@
-import { add } from '../packages/core/dist/index.esm.js';
+import { ViteElectronBuildPlugin, ViteElectronRuntimePlugin } from '../packages/vite-plugins/dist/index.esm.js';
 
-console.log(add(12, 9), 'module');
+console.log(ViteElectronBuildPlugin, 'ViteElectronBuildPlugin');
+console.log(ViteElectronRuntimePlugin, 'ViteElectronRuntimePlugin');
