@@ -17,7 +17,7 @@ export const renderTemplate = ({ templateDir, projectPath, projectName }: Render
     // 如果是 node_modules 不创建
     if (path.basename(templateDir) === 'node_modules') return;
 
-    // 递归创建 dest 的子目录和文件
+    // 递归创建 projectPath 的子目录和文件
     fs.mkdirSync(projectPath, { recursive: true });
     for (const file of fs.readdirSync(templateDir)) {
       renderTemplate({

@@ -9,6 +9,7 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
+  "ignorePatterns": ["template/**/*"],
   "parserOptions": {
     "ecmaVersion": 6,
     "sourceType": "module",
