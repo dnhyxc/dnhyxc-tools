@@ -1,3 +1,3 @@
-import { demo } from './src/demo';
+import { demo } from '@/demo';
 
 export { demo };
