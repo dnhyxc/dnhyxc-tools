@@ -1,6 +1,6 @@
 {
   "name": "dnhyxc",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "dnhyxc 自定义脚手架",
   "main": "dnhyxc.cjs",
   "bin": {
@@ -25,7 +25,6 @@
   "type": "module",
   "files": [
     "dnhyxc.cjs",
-    "dnhyxc.d.ts",
     "src/template/**",
     "README.md"
   ],

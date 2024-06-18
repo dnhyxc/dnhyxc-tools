@@ -133,3 +133,21 @@ export const checkProjectName = (projectName: string) => {
   const res = /^(?:@[a-z0-9-*~][a-z0-9-*._~]*\/)?[a-z0-9-~][a-z0-9-._~]*$/.test(projectName);
   return res;
 };
+
+// 根据语义化版本规则增加版本号
+export const updateVersion = (version: string) => {
+  const parts = version.split('.');
+  let major = parseInt(parts[0]);
+  let minor = parseInt(parts[1]);
+  let patch = parseInt(parts[2]);
+
+  if (patch >= 99) {
+    minor += 1;
+  } else if (minor >= 99) {
+    major += 1;
+  } else {
+    patch += 1;
+  }
+
+  return `${major}.${minor}.${patch}`;
+};
