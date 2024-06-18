@@ -143,8 +143,10 @@ export const updateVersion = (version: string) => {
 
   if (patch >= 99) {
     minor += 1;
+    patch = 0;
   } else if (minor >= 99) {
     major += 1;
+    minor = 0;
   } else {
     patch += 1;
   }
