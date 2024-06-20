@@ -32,6 +32,7 @@ const programCreateCallback = async (name: string, option: Options) => {
     console.log(logs.error, '项目名称存在非法字符，请重新输入');
     return;
   }
+  // init 方法初始化项目
   await init(name, option);
 };
 

@@ -21,6 +21,7 @@ interface Result {
   needsInstall: boolean;
 }
 
+// 根据收集到的信息初始化项目
 export const init = async (name: string, option: Options) => {
   const { template, force } = option;
 
@@ -114,15 +115,17 @@ export const init = async (name: string, option: Options) => {
     projectPath = path.join(process.cwd(), projectName);
   }
 
+  // 项目已存在且选择强制覆盖
   if (!needsOverwrite && fs.existsSync(projectPath)) {
     await removeDir(projectPath);
   }
-
+  // 项目已存在且未选择强制覆盖
   if (needsOverwrite && !restoreProjectName.trim()) {
     console.log(logs.info, chalk.yellowBright('项目名称冲突或有误，请修改项目名称后再试'));
     return;
   }
 
+  // 创建项目文件夹
   const render = (templateName: string) => {
     const templateDir = path.resolve(__dirname, `./src/template/${templateName}`);
     renderTemplate({ templateDir, projectPath, projectName });
@@ -135,7 +138,7 @@ export const init = async (name: string, option: Options) => {
     render('base');
   }
 
-  // 取反表示选择的是 yes
+  // 判断是否使用 mbox，取反表示选择的是 yes
   if (!needsMbox) {
     // 判断是否使用ts
     if (!needsTypeScript) {
@@ -145,10 +148,12 @@ export const init = async (name: string, option: Options) => {
     }
   }
 
+  // 判断是否使用 eslint，取反表示选择的是 yes
   if (!needsEslint) {
     render('config/eslint');
   }
 
+  // 判断是否使用 husky，取反表示选择的是 yes
   if (!needsHusky) {
     render('config/husky');
   }
@@ -156,6 +161,7 @@ export const init = async (name: string, option: Options) => {
   // 将pkg.json重命名为package.json
   const pkg = (await fileRename(projectPath, projectName)) as { [key: string]: any };
 
+  // 是否自动安装依赖，取反表示选择的是 yes
   if (!needsInstall) {
     await install(projectPath, projectName, pkg);
   } else {

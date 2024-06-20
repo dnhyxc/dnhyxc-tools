@@ -14,11 +14,13 @@ import eslint from '@rollup/plugin-eslint';
 import alias from '@rollup/plugin-alias';
 import { getPath } from '../utils/index.mjs';
 
+const PACKAGE_NAME = 'dnhyxc';
+
 export const buildConfig = ({ packageName }) => {
   // 将包名转化为驼峰式命名，以便通过window.packageName访问
   packageName = packageName.replace(/-(\w)/g, (_, char) => char.toUpperCase());
 
-  const output = packageName === 'dnhyxc' ? [
+  const output = packageName === PACKAGE_NAME ? [
     // 输出支持 commonjs 的包
     { file: 'dnhyxc.cjs', format: 'cjs' },
   ] : [
@@ -96,7 +98,7 @@ export const buildConfig = ({ packageName }) => {
   };
 
   // 如果不是dnhyxc脚手架包，则添加声明文件打包配置
-  if (packageName !== 'dnhyxc') {
+  if (packageName !== PACKAGE_NAME) {
     baseConfig.push(declaration);
   }
 
