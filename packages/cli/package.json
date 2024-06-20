@@ -7,7 +7,6 @@
     "dnhyxc": "dnhyxc.cjs"
   },
   "scripts": {
-    "start": "rollup -c rollup.config.js && node './dist/index.js'",
     "dev": "rollup -c rollup.config.js -w",
     "build": "rimraf dnhyxc.cjs && vitest run && rollup -c rollup.config.js",
     "test": "vitest run"
