@@ -16,7 +16,7 @@ program
     console.log(`\r\nRun ${chalk.cyan('dnhyxc-ci <command> --help')} for detailed usage of given command\r\n`);
   });
 
-const publishCallback = async (name: any, options: Options) => {
+const publishCallback = async (name: string, options: Options) => {
   await publish(name, options);
 };
 
