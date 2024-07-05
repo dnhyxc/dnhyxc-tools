@@ -14,15 +14,15 @@ import eslint from '@rollup/plugin-eslint';
 import alias from '@rollup/plugin-alias';
 import { getPath } from '../utils/index.mjs';
 
-const PACKAGE_NAME = 'dnhyxc';
+const PACKAGE_NAME = ['dnhyxc', 'ci'];
 
 export const buildConfig = ({ packageName }) => {
   // 将包名转化为驼峰式命名，以便通过window.packageName访问
   packageName = packageName.replace(/-(\w)/g, (_, char) => char.toUpperCase());
 
-  const output = packageName === PACKAGE_NAME ? [
+  const output = PACKAGE_NAME.includes(packageName) ? [
     // 输出支持 commonjs 的包
-    { file: 'dnhyxc.cjs', format: 'cjs' },
+    { file: `${packageName}.cjs`, format: 'cjs' },
   ] : [
     // 输出支持 es6 语法的包
     { file: 'dist/index.esm.js', format: 'es' },
@@ -46,7 +46,9 @@ export const buildConfig = ({ packageName }) => {
         }), // typescript 转义
         json(),
         terser(),
-        resolve(),
+        resolve({
+          preferBuiltins: true // 解析第三方模块中的 Node.js 内置模块
+        }),
         commonjs(),
         babel({
           presets: [
@@ -60,12 +62,13 @@ export const buildConfig = ({ packageName }) => {
             ]
           ],
           // 用于支持在类中使用类属性的新语法，当loose设置为true，代码被以赋值表达式的形式编译，否则，代码以Object.defineProperty来编译。
-          plugins: [['@babel/plugin-proposal-class-properties']],
+          plugins: ['@babel/plugin-proposal-class-properties', '@babel/plugin-transform-private-methods'],
           exclude: 'node_modules/**'
         }),
         // 配置路径别名
         alias({
           entries: [
+            { find: '@', replacement: '../packages/ci/src' },
             { find: '@', replacement: '../packages/cli/src' },
             { find: '@', replacement: '../packages/vite-plugins/src' }
           ]
@@ -76,9 +79,10 @@ export const buildConfig = ({ packageName }) => {
           throwOnWarning: true,
           include: ['packages/**'],
           exclude: ['node_modules/**', 'dist/**']
-        })
+        }),
       ],
-      output
+      output,
+      external: ['node-ssh'] // 告诉 Rollup 不要将 node-ssh 打包进去，而是作为外部依赖
     }
   ]
 
@@ -98,7 +102,7 @@ export const buildConfig = ({ packageName }) => {
   };
 
   // 如果不是dnhyxc脚手架包，则添加声明文件打包配置
-  if (packageName !== PACKAGE_NAME) {
+  if (!PACKAGE_NAME.includes(packageName)) {
     baseConfig.push(declaration);
   }
 

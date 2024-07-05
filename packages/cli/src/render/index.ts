@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import { PKG } from '@/constants';
-import { deepMergePkg, dependenciesSort, verifyFile } from '@/utils';
+import { deepMergePkg, dependenciesSort, verifyFile } from '../utils';
 
 interface RenderTemplateParams {
   templateDir: string;

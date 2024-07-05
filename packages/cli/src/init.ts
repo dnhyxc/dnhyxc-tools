@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import prompts from 'prompts';
 import chalk from 'chalk';
-import { verifyFile, removeDir, logs, fileRename } from '@/utils';
+import { verifyFile, removeDir, logs, fileRename } from './utils';
 import { renderTemplate } from '@/render';
 import { install, manualInstall } from '@/install';
 
