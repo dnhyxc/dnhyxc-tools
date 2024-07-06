@@ -18,6 +18,8 @@ export interface Options {
   install: boolean;
 }
 
+let result: Partial<Options> = {};
+
 const ssh = new NodeSSH();
 
 const getPublishConfig = () => {
@@ -26,7 +28,8 @@ const getPublishConfig = () => {
     const config = require(`${process.cwd()}/publish.config.js`);
     return config;
   } catch (error) {
-    console.log(beautyLog.error, chalk.red('当前项目根目录下未配置 publish.config.js 文件'));
+    console.log(beautyLog.error, chalk.red('当前项目根目录下未配置 publish.config.js 文件，需要手动输入配置信息'));
+    // return null;
     throw error;
   }
 };
@@ -226,6 +229,9 @@ const onConnectServer = async ({
   username,
   password
 }: Pick<Options, 'host' | 'port' | 'username' | 'password'>) => {
+  const spinner = ora({
+    text: chalk.yellowBright(chalk.cyan(`正在连接服务器: ${username}@${host}:${port} ...`))
+  }).start();
   try {
     // 连接到服务器
     await ssh.connect({
@@ -235,11 +241,13 @@ const onConnectServer = async ({
       password,
       tryKeyboard: true
     });
+    spinner.succeed(chalk.greenBright('服务器连接成功!!!'));
   } catch (err) {
-    console.log(beautyLog.error, chalk.red(`连接服务器失败: ${err}`));
+    spinner.fail(chalk.redBright(`服务器连接失败: ${err}`));
     process.exit(1);
   }
 };
+
 // 连接服务器并上传文件
 const onPublish = async ({
   username,
@@ -259,6 +267,12 @@ const onPublish = async ({
       port,
       password
     });
+    // 判断是否是服务端项目
+    if (publishConfig?.porjectInfo[projectName].isServer) {
+      await onCompressServiceFile(localFilePath);
+    } else {
+      await onCompressFile(localFilePath);
+    }
     await onPutFile(localFilePath, remoteFilePath);
     await onDeleteFile(`${remoteFilePath}/dist`);
     await onUnzipZip(remoteFilePath);
@@ -281,8 +295,6 @@ const onPublish = async ({
   }
 };
 
-let result: Partial<Options> = {};
-
 export const publish = async (projectName: string, options: Options) => {
   const {
     host: _host,
@@ -295,6 +307,15 @@ export const publish = async (projectName: string, options: Options) => {
   } = options;
 
   const publishConfig = getPublishConfig();
+
+  const getRemoteFilePath = () => {
+    if (publishConfig?.porjectInfo[projectName]) {
+      return publishConfig?.porjectInfo[projectName].remoteFilePath;
+    } else {
+      console.log(beautyLog.error, chalk.red(`未找到项目 ${projectName} 的配置信息`));
+      process.exit(1);
+    }
+  };
 
   try {
     result = await prompts(
@@ -324,7 +345,7 @@ export const publish = async (projectName: string, options: Options) => {
           name: 'remoteFilePath',
           type: _remoteFilePath ? null : 'text',
           message: '目标服务器项目文件路径:',
-          initial: publishConfig?.porjectInfo[projectName].remoteFilePath,
+          initial: getRemoteFilePath(),
           validate: (value) => (value ? true : '请输入目标服务器项目文件路径')
         },
         {
@@ -345,7 +366,8 @@ export const publish = async (projectName: string, options: Options) => {
         {
           name: 'password',
           type: _password ? null : 'password',
-          message: '密码:'
+          message: '密码:',
+          validate: (value) => (value ? true : '请输入密码')
         }
       ],
       {
@@ -360,12 +382,6 @@ export const publish = async (projectName: string, options: Options) => {
 
   const { host, port, username, password, localFilePath, remoteFilePath, install } = result;
 
-  // 判断是否时服务端项目
-  if (publishConfig?.porjectInfo[projectName].isServer) {
-    await onCompressServiceFile(localFilePath || _localFilePath);
-  } else {
-    await onCompressFile(localFilePath || _localFilePath);
-  }
   await onPublish({
     host: host || _host,
     port: port || _port,

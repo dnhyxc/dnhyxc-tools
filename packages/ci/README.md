@@ -3,14 +3,16 @@
 全局安装 `@dnhyxc/ci`：可以在各个项目中使用，无需单独为每个项目安装。
 
 ```yaml
-npm install -g @dnhyxc/ci
+npm install -g dnhyxc-ci
 ```
 
 或者在项目中单独安装：
 
 ```yaml
-npm install --save-dev @dnhyxc/ci
+npm install --save-dev dnhyxc-ci
 ```
+
+> 注意：如果是发布后台服务，在项目中单独安装 `dnhyxc-ci` 后，需要将 `package.json` 中的 `dnhyxc-ci` 包名删除，因为发布服务代码时，会将 `package.json` 发布到服务器上，从而导致服务器上安装依赖时可能会因为 `dnhyxc-ci` 包的 node 版本问题导致安装失败。
 
 ### 使用方法
 

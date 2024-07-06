@@ -1,5 +1,11 @@
 # dnhyxc-ci
 
+## 0.0.4
+
+### Patch Changes
+
+- 优化配置读取
+
 ## 0.0.3
 
 ### Patch Changes

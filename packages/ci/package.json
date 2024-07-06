@@ -1,6 +1,6 @@
 {
   "name": "dnhyxc-ci",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A set of CI/CD tools",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
