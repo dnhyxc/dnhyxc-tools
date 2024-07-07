@@ -16,6 +16,7 @@ export interface Options {
   localFilePath: string;
   remoteFilePath: string;
   install: boolean;
+  isServer: boolean;
 }
 
 let result: Partial<Options> = {};
@@ -28,9 +29,11 @@ const getPublishConfig = () => {
     const config = require(`${process.cwd()}/publish.config.js`);
     return config;
   } catch (error) {
-    console.log(beautyLog.error, chalk.red('当前项目根目录下未配置 publish.config.js 文件，需要手动输入配置信息'));
-    // return null;
-    throw error;
+    console.log(
+      beautyLog.warning,
+      chalk.yellowBright('当前项目根目录下未配置 publish.config.js 文件，需要手动输入配置信息')
+    );
+    return null;
   }
 };
 
@@ -259,7 +262,7 @@ const onPublish = async ({
   projectName,
   install,
   publishConfig
-}: Options & { projectName: string; publishConfig: { porjectInfo: any; projectInfo: any } }) => {
+}: Omit<Options, 'isServer'> & { projectName: string; publishConfig: { porjectInfo: any; projectInfo: any } }) => {
   try {
     await onConnectServer({
       host,
@@ -268,7 +271,7 @@ const onPublish = async ({
       password
     });
     // 判断是否是服务端项目
-    if (publishConfig?.porjectInfo[projectName].isServer) {
+    if (publishConfig?.porjectInfo[projectName]?.isServer) {
       await onCompressServiceFile(localFilePath);
     } else {
       await onCompressFile(localFilePath);
@@ -280,7 +283,7 @@ const onPublish = async ({
     if (install) {
       await onInstall(remoteFilePath);
     }
-    if (publishConfig?.porjectInfo[projectName].isServer) {
+    if (publishConfig?.porjectInfo[projectName]?.isServer) {
       await onRestartServer(remoteFilePath);
     }
     console.log(
@@ -310,11 +313,15 @@ export const publish = async (projectName: string, options: Options) => {
 
   const getRemoteFilePath = () => {
     if (publishConfig?.porjectInfo[projectName]) {
-      return publishConfig?.porjectInfo[projectName].remoteFilePath;
+      return publishConfig?.porjectInfo[projectName]?.remoteFilePath;
     } else {
-      console.log(beautyLog.error, chalk.red(`未找到项目 ${projectName} 的配置信息`));
-      process.exit(1);
+      // console.log(beautyLog.warning, chalk.yellowBright(`未找到项目 ${projectName} 的配置信息`));
+      return '';
     }
+  };
+
+  const getInstallStatus = (isServer: boolean) => {
+    return !!(_install || (publishConfig ? !publishConfig?.porjectInfo[projectName]?.isServer : !isServer));
   };
 
   try {
@@ -324,14 +331,14 @@ export const publish = async (projectName: string, options: Options) => {
           name: 'host',
           type: _host ? null : 'text',
           message: 'host:',
-          initial: '101.43.50.15',
+          initial: publishConfig?.serverInfo?.host || '',
           validate: (value) => (value ? true : '请输入host')
         },
         {
           name: 'port',
           type: _port ? null : 'text',
           message: '端口号:',
-          initial: 22,
+          initial: publishConfig?.serverInfo?.port || '',
           validate: (value) => (value ? true : '请输入端口号')
         },
         {
@@ -345,12 +352,20 @@ export const publish = async (projectName: string, options: Options) => {
           name: 'remoteFilePath',
           type: _remoteFilePath ? null : 'text',
           message: '目标服务器项目文件路径:',
-          initial: getRemoteFilePath(),
+          initial: getRemoteFilePath() || '',
           validate: (value) => (value ? true : '请输入目标服务器项目文件路径')
         },
         {
+          name: 'isServer',
+          type: _install || getRemoteFilePath() ? null : 'toggle',
+          message: '是否是后台服务:',
+          initial: false,
+          active: 'yes',
+          inactive: 'no'
+        },
+        {
           name: 'install',
-          type: _install || !publishConfig?.porjectInfo[projectName].isServer ? null : 'toggle',
+          type: (_, values) => (getInstallStatus(values.isServer) ? null : 'toggle'),
           message: '是否安装依赖:',
           initial: false,
           active: 'yes',
@@ -360,7 +375,7 @@ export const publish = async (projectName: string, options: Options) => {
           name: 'username',
           type: _username ? null : 'text',
           message: '用户名称:',
-          initial: 'root',
+          initial: publishConfig?.serverInfo?.username || '',
           validate: (value) => (value ? true : '请输入用户名称')
         },
         {
