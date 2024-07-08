@@ -2,8 +2,8 @@
 
 import { program } from 'commander'; // 解析命令行参
 import chalk from 'chalk'; // 终端标题美化
-import { updateVersion } from '@/utils';
-import { publish, Options } from './src/publish';
+import { updateVersion } from '@ci/utils';
+import { publish, Options } from '@ci/publish';
 import pkg from './package.json';
 
 program.version(updateVersion(pkg.version), '-v, --version');

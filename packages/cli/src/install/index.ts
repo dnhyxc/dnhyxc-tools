@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import { exec } from 'child_process';
 import ora from 'ora';
 import chalk from 'chalk';
-import { logs, getExecScript } from '../utils';
+import { logs, getExecScript } from '@/utils';
 
 // 获取项目运行的脚本
 const getScript = (projectName: string, execScript: string | null = null, pkg: { [key: string]: any }) => {

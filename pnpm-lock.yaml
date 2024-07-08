@@ -6570,7 +6570,7 @@ packages:
       rollup: 4.9.5
       typescript: 5.3.3
     optionalDependencies:
-      '@babel/code-frame': 7.23.5
+      '@babel/code-frame': 7.24.7
     dev: true
 
   /rollup-plugin-terser@7.0.2(rollup@4.9.5):
@@ -7572,7 +7572,7 @@ packages:
       cac: 6.7.14
       debug: 4.3.4
       pathe: 1.1.2
-      picocolors: 1.0.0
+      picocolors: 1.0.1
       vite: 5.2.8(@types/node@20.12.7)
     transitivePeerDependencies:
       - '@types/node'

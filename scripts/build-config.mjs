@@ -68,7 +68,7 @@ export const buildConfig = ({ packageName }) => {
         // 配置路径别名
         alias({
           entries: [
-            { find: '@', replacement: '../packages/ci/src' },
+            { find: '@ci', replacement: '../packages/ci/src' },
             { find: '@', replacement: '../packages/cli/src' },
             { find: '@', replacement: '../packages/vite-plugins/src' }
           ]

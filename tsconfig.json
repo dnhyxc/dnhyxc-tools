@@ -1,5 +1,7 @@
 {
   "include": [
+    "./packages/test/src/*",
+    "./packages/test/index.ts",
     "./packages/ci/src/*",
     "./packages/ci/index.ts",
     "./packages/cli/src/*",
@@ -25,7 +27,8 @@
     // 引入模块的方式
     // 路径别名配置
     "paths": {
-      "@/*": ["./packages/ci/src/*", "./packages/cli/src/*", "./packages/vite-plugins/src/*"]
+      "@/*": ["./packages/cli/src/*", "./packages/vite-plugins/src/*"],
+      "@ci/*": ["./packages/ci/src/*"]
     }
   }
 }

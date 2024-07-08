@@ -4,7 +4,7 @@ import chalk from 'chalk';
 import { program } from 'commander';
 import { Options, init } from '@/init';
 import { templates } from '@/constants';
-import { logs, checkProjectName, updateVersion } from './src/utils';
+import { logs, checkProjectName, updateVersion } from '@/utils';
 import pkg from './package.json';
 
 program.version(updateVersion(pkg.version), '-v, --version');

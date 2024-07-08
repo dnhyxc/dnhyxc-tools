@@ -32,6 +32,14 @@ const copyFileSync = ({ templatePath, projectPath, projectName }) => {
     return;
   }
 
+  if (path.basename(templatePath) === 'index.ts') {
+    const indexTs = fs.readFileSync(templatePath, 'utf-8');
+    const code = indexTs.replace(/from\s+['"](\.\/)?src\/demo['"]/g, `from '@${projectName}/demo'`);
+    console.log(indexTs, code);
+    fs.writeFileSync(projectPath, code);
+    return
+  }
+
   if (path.basename(templatePath) === 'package.json') {
     const pkg = JSON.parse(fs.readFileSync(templatePath, 'utf-8'));
     pkg.name = `dnhyxc-${projectName}`;
@@ -53,7 +61,7 @@ const copyFileSync = ({ templatePath, projectPath, projectName }) => {
 const updateBuildConfig = (buildConfigPath, projectName) => {
   const config = fs.readFileSync(buildConfigPath, 'utf-8');
   const modifiedConfig = config.replace(/alias\(\{([\s\S]*?)entries:\s*\[([\s\S]*?)\]\s*\}\)/, (match, p1, p2) => {
-    const entries = `\n            { find: '@', replacement: '../packages/${projectName}/src' }, ${p2}`;
+    const entries = `\n            { find: '@${projectName}', replacement: '../packages/${projectName}/src' }, ${p2}`;
     return `alias({${p1}entries: [${entries}]})`;
   });
   fs.writeFileSync(buildConfigPath, modifiedConfig);
@@ -85,13 +93,24 @@ const updateTsConfig = (tsConfigPath, projectName) => {
     const modifiedIncludeValue = `"./packages/${projectName}/src/*", 
     "./packages/${projectName}/index.ts", ${includeValue}`;
     const modifiedConfig = config.replace(includeRegex, `"include": [${modifiedIncludeValue}]`);
-    const atPathsRegex = /"@\/\*": \[\s*(.*?)\]/s;
-    const atPathsMatch = atPathsRegex.exec(modifiedConfig);
-    if (atPathsMatch) {
-      const atPathsValue = atPathsMatch[1];
-      const modifiedAtPathsValue = `"./packages/${projectName}/src/*", ${atPathsValue}`;
-      const modifiedConfigString = modifiedConfig.replace(atPathsRegex, `"@/*": [${modifiedAtPathsValue}]`);
-      fs.writeFileSync(tsConfigPath, modifiedConfigString);
+    const regex = /"paths"\s*:\s*{([^}]*)}/;
+    const match = modifiedConfig.match(regex);
+    if (match) {
+      const pathsContent = match[1]; // 获取 "paths" 内部的内容
+      let pathsObj;
+      try {
+        pathsObj = JSON.parse(`{${pathsContent}}`); // 解析为 JavaScript 对象
+      } catch (error) {
+        console.error('解析 "paths" 内部内容时出错：', error);
+      }
+      if (pathsObj) {
+        pathsObj[`@${projectName}/*`] = [`./packages/${projectName}/src/*`];
+        const modifiedPathsJsonString = JSON.stringify(pathsObj, null, 2);
+        const modifiedConfigString = modifiedConfig.replace(regex, `"paths": ${modifiedPathsJsonString}`);
+        fs.writeFileSync(tsConfigPath, modifiedConfigString);
+      }
+    } else {
+      console.error('未找到 "paths" 选项');
     }
   }
 }
