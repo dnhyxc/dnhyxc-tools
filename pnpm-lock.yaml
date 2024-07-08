@@ -197,6 +197,18 @@ importers:
         specifier: ^1.2.0
         version: 1.2.0(@types/node@20.12.7)
 
+  packages/test:
+    devDependencies:
+      vitest:
+        specifier: ^1.2.0
+        version: 1.2.0(@types/node@20.12.7)
+
+  packages/test1:
+    devDependencies:
+      vitest:
+        specifier: ^1.2.0
+        version: 1.2.0(@types/node@20.12.7)
+
   packages/vite-plugins:
     devDependencies:
       vitest:

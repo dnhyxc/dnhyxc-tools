@@ -14,6 +14,10 @@ const checkProjectName = (projectName) => {
   return res;
 };
 
+const getSpace = (num) => {
+  return '\u0020'.repeat(num);
+}
+
 // 复制模板文件
 const copyFileSync = ({ templatePath, projectPath, projectName }) => {
   const stats = fs.statSync(templatePath);
@@ -35,7 +39,6 @@ const copyFileSync = ({ templatePath, projectPath, projectName }) => {
   if (path.basename(templatePath) === 'index.ts') {
     const indexTs = fs.readFileSync(templatePath, 'utf-8');
     const code = indexTs.replace(/from\s+['"](\.\/)?src\/demo['"]/g, `from '@${projectName}/demo'`);
-    console.log(indexTs, code);
     fs.writeFileSync(projectPath, code);
     return
   }
@@ -60,11 +63,20 @@ const copyFileSync = ({ templatePath, projectPath, projectName }) => {
 // 更新 build-config.mjs
 const updateBuildConfig = (buildConfigPath, projectName) => {
   const config = fs.readFileSync(buildConfigPath, 'utf-8');
-  const modifiedConfig = config.replace(/alias\(\{([\s\S]*?)entries:\s*\[([\s\S]*?)\]\s*\}\)/, (match, p1, p2) => {
-    const entries = `\n            { find: '@${projectName}', replacement: '../packages/${projectName}/src' }, ${p2}`;
-    return `alias({${p1}entries: [${entries}]})`;
-  });
-  fs.writeFileSync(buildConfigPath, modifiedConfig);
+  const modifiedConfig1 = config.replace(
+    /alias\(\{([\s\S]*?)entries:\s*\[([\s\S]*?)\]\s*\}\)/, (match, p1, p2) => {
+      const entries = `\n${getSpace(12)}{ find: '@${projectName}', replacement: '../packages/${projectName}/src' }, ${p2}`;
+      return `alias({${p1}entries: [${entries}]\n${getSpace(8)}})`;
+    }
+  );
+  const modifiedConfig2 = modifiedConfig1.replace(
+    /declaration\s*=\s*{([\s\S]*?)plugins:\s*\[\s*dts\(\),\s*([\s\S]*?)\],/,
+    (match, p1) => {
+      const entries = `\n${getSpace(10)}{ find: '@', replacement: './src' }, \n${getSpace(10)}{ find: '@${projectName}', replacement: './src' }`;
+      return `declaration = {${p1}plugins: [\n${getSpace(6)}dts(),\n${getSpace(6)}alias({\n${getSpace(8)}entries: [${entries}\n${getSpace(8)}]\n${getSpace(6)}})\n${getSpace(4)}],`;
+    }
+  );
+  fs.writeFileSync(buildConfigPath, modifiedConfig2);
 }
 
 // 更新 rollup.config.js
@@ -90,7 +102,7 @@ const updateTsConfig = (tsConfigPath, projectName) => {
   const includeMatch = includeRegex.exec(config);
   if (includeMatch) {
     const includeValue = includeMatch[1];
-    const modifiedIncludeValue = `"./packages/${projectName}/src/*", 
+    const modifiedIncludeValue = `\n${getSpace(4)}"./packages/${projectName}/src/*", 
     "./packages/${projectName}/index.ts", ${includeValue}`;
     const modifiedConfig = config.replace(includeRegex, `"include": [${modifiedIncludeValue}]`);
     const regex = /"paths"\s*:\s*{([^}]*)}/;
