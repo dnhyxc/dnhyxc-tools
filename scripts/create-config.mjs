@@ -63,20 +63,21 @@ const copyFileSync = ({ templatePath, projectPath, projectName }) => {
 // 更新 build-config.mjs
 const updateBuildConfig = (buildConfigPath, projectName) => {
   const config = fs.readFileSync(buildConfigPath, 'utf-8');
-  const modifiedConfig1 = config.replace(
+  const baseConfigEntries = config.replace(
     /alias\(\{([\s\S]*?)entries:\s*\[([\s\S]*?)\]\s*\}\)/, (match, p1, p2) => {
       const entries = `\n${getSpace(12)}{ find: '@${projectName}', replacement: '../packages/${projectName}/src' }, ${p2}`;
       return `alias({${p1}entries: [${entries}]\n${getSpace(8)}})`;
     }
   );
-  const modifiedConfig2 = modifiedConfig1.replace(
-    /declaration\s*=\s*{([\s\S]*?)plugins:\s*\[\s*dts\(\),\s*([\s\S]*?)\],/,
-    (match, p1) => {
-      const entries = `\n${getSpace(10)}{ find: '@', replacement: './src' }, \n${getSpace(10)}{ find: '@${projectName}', replacement: './src' }`;
-      return `declaration = {${p1}plugins: [\n${getSpace(6)}dts(),\n${getSpace(6)}alias({\n${getSpace(8)}entries: [${entries}\n${getSpace(8)}]\n${getSpace(6)}})\n${getSpace(4)}],`;
-    }
-  );
-  fs.writeFileSync(buildConfigPath, modifiedConfig2);
+  const declarationEntries = baseConfigEntries.replace(/(declaration[\s\S]*?alias\(\{[\s\S]*?entries:\s*\[[\s\S]*?\]\s*\})/, (match, p1) => {
+    // 新的条目
+    const newEntry = `{ find: '@${projectName}', replacement: './src' }`;
+    // 构建新的 entries 数组内容，将新条目添加进去
+    const entries = `\n${getSpace(10)}${newEntry}, \n${getSpace(10)}${p1.trim().match(/entries:\s*\[([\s\S]*?)\]\s*\}/)[1].trim()}`;
+    // 返回更新后的字符串
+    return p1.replace(/entries:\s*\[[\s\S]*?\]/, `entries: [${entries}\n${getSpace(8)}]`);
+  });
+  fs.writeFileSync(buildConfigPath, declarationEntries);
 }
 
 // 更新 rollup.config.js
