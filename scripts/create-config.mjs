@@ -143,7 +143,7 @@ const create = async ({ templatePath, packagesPath, projectName }) => {
   updateTsConfig(tsConfigPath, projectName)
   updateRollupConfig(projectName)
   updateVitestConfig(projectName)
-  console.log(`创建 ${projectName} 项目成功！`);
+  console.log(`创建 ${projectName} 项目成功，运行 pnpm i 安装依赖！`);
 }
 
 create({ templatePath, packagesPath, projectName: args[0] })
