@@ -135,7 +135,7 @@ const create = async ({ templatePath, packagesPath, projectName }) => {
     return;
   }
   if (fs.existsSync(projectPath)) {
-    console.log(`已有 ${projectName} 项目，请勿重复创建！`);
+    console.log(`已有 ${projectName} 项目，请勿重复创建！\n`);
     return;
   }
   copyFileSync({ templatePath, projectPath, projectName })
@@ -143,7 +143,7 @@ const create = async ({ templatePath, packagesPath, projectName }) => {
   updateTsConfig(tsConfigPath, projectName)
   updateRollupConfig(projectName)
   updateVitestConfig(projectName)
-  console.log(`创建 ${projectName} 项目成功，运行 pnpm i 安装依赖！`);
+  console.log(`创建 ${projectName} 项目成功，运行 pnpm i 安装依赖！\n`);
 }
 
 create({ templatePath, packagesPath, projectName: args[0] })
