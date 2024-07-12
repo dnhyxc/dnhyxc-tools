@@ -329,28 +329,28 @@ export const publish = async (projectName: string, options: Options) => {
       [
         {
           name: 'host',
-          type: _host ? null : 'text',
+          type: _host || publishConfig ? null : 'text',
           message: 'host:',
           initial: publishConfig?.serverInfo?.host || '',
           validate: (value) => (value ? true : '请输入host')
         },
         {
           name: 'port',
-          type: _port ? null : 'text',
+          type: _port || publishConfig ? null : 'text',
           message: '端口号:',
           initial: publishConfig?.serverInfo?.port || '',
           validate: (value) => (value ? true : '请输入端口号')
         },
         {
           name: 'localFilePath',
-          type: _localFilePath ? null : 'text',
+          type: _localFilePath || publishConfig ? null : 'text',
           message: '本地项目文件路径:',
           initial: process.cwd(),
           validate: (value) => (value ? true : '请输入本地项目文件路径')
         },
         {
           name: 'remoteFilePath',
-          type: _remoteFilePath ? null : 'text',
+          type: _remoteFilePath || publishConfig ? null : 'text',
           message: '目标服务器项目文件路径:',
           initial: getRemoteFilePath() || '',
           validate: (value) => (value ? true : '请输入目标服务器项目文件路径')
@@ -373,7 +373,7 @@ export const publish = async (projectName: string, options: Options) => {
         },
         {
           name: 'username',
-          type: _username ? null : 'text',
+          type: _username || publishConfig ? null : 'text',
           message: '用户名称:',
           initial: publishConfig?.serverInfo?.username || '',
           validate: (value) => (value ? true : '请输入用户名称')
@@ -398,12 +398,12 @@ export const publish = async (projectName: string, options: Options) => {
   const { host, port, username, password, localFilePath, remoteFilePath, install } = result;
 
   await onPublish({
-    host: host || _host,
-    port: port || _port,
-    username: username || _username,
+    host: host || publishConfig?.serverInfo?.host || _host,
+    port: port || publishConfig?.serverInfo?.port || _port,
+    username: username || publishConfig?.serverInfo?.username || _username,
     password: password || _password,
-    localFilePath: localFilePath || _localFilePath,
-    remoteFilePath: remoteFilePath || _remoteFilePath,
+    localFilePath: localFilePath || process.cwd() || _localFilePath,
+    remoteFilePath: remoteFilePath || getRemoteFilePath() || _remoteFilePath,
     install: install || _install,
     projectName,
     publishConfig

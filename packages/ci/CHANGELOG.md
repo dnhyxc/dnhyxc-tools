@@ -1,5 +1,17 @@
 # dnhyxc-ci
 
+## 0.0.10
+
+### Patch Changes
+
+- 优化数据收集
+
+## 0.0.9
+
+### Patch Changes
+
+- 优化数据收集
+
 ## 0.0.8
 
 ### Patch Changes
