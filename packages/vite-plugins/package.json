@@ -25,8 +25,5 @@
   "files": [
     "dist",
     "README.md"
-  ],
-  "devDependencies": {
-    "vitest": "^1.2.0"
-  }
+  ]
 }
