@@ -1,5 +1,17 @@
 # dnhyxc-ci
 
+## 0.0.12
+
+### Patch Changes
+
+- 更新package
+
+## 0.0.11
+
+### Patch Changes
+
+- 优化package.json
+
 ## 0.0.10
 
 ### Patch Changes

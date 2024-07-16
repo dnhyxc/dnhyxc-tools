@@ -1,8 +1,8 @@
 {
   "name": "dnhyxc-ci",
-  "version": "0.0.10",
+  "version": "0.0.12",
   "description": "A set of CI/CD tools",
-  "main": "ci.cjs",
+  "main": "dist/ci.cjs",
   "bin": {
     "dnhyxc-ci": "ci.cjs"
   },
@@ -25,5 +25,25 @@
   "files": [
     "ci.cjs",
     "README.md"
-  ]
+  ],
+  "devDependencies": {
+    "@types/archiver": "^6.0.2",
+    "@types/cli-progress": "^3.11.5",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/prompts": "^2.4.9",
+    "vitest": "^1.2.0"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "chalk": "^4.1.2",
+    "cli-progress": "^3.12.0",
+    "commander": "^12.0.0",
+    "figlet": "^1.7.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^8.2.0",
+    "node-ssh": "^13.2.0",
+    "ora": "^5.1.0",
+    "prompts": "^2.4.2"
+  }
 }
