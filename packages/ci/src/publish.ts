@@ -6,38 +6,21 @@ import cliProgress from 'cli-progress';
 import archiver from 'archiver';
 import chalk from 'chalk';
 import ora from 'ora';
-import { beautyLog } from './utils';
-
-export interface Options {
-  host: string;
-  port: string;
-  username: string;
-  password: string;
-  localFilePath: string;
-  remoteFilePath: string;
-  install: boolean;
-  isServer: boolean;
-}
+import {
+  beautyLog,
+  getPublishConfig,
+  getConfigFilePath,
+  getConfigServerInfo,
+  onRestartServer,
+  onRemoveFile
+} from './utils';
+import { Options, PublishConfigParams } from './typings';
 
 let result: Partial<Options> = {};
 
 const ssh = new NodeSSH();
 
-const getPublishConfig = () => {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const config = require(`${process.cwd()}/publish.config.js`);
-    return config;
-  } catch (error) {
-    console.log(
-      beautyLog.warning,
-      chalk.yellowBright('当前项目根目录下未配置 publish.config.js 文件，需要手动输入配置信息')
-    );
-    return null;
-  }
-};
-
-// 压缩dist
+// 压缩 dist
 const onCompressFile = async (localFilePath: string) => {
   return new Promise((resolve, reject) => {
     const spinner = ora({
@@ -145,30 +128,6 @@ const onDeleteFile = async (localFile: string) => {
   }
 };
 
-// 删除本地文件
-const onRemoveFile = async (localFile: string) => {
-  const spinner = ora({
-    text: chalk.yellowBright(`正在删除文件: ${chalk.cyan(localFile)}`)
-  }).start();
-  return new Promise((resolve, reject) => {
-    try {
-      const fullPath = path.resolve(localFile);
-      // 删除文件
-      fs.unlink(fullPath, (err) => {
-        if (err === null) {
-          spinner.succeed(chalk.greenBright(`删除文件: ${chalk.cyan(localFile)} 成功\n`));
-          resolve(1);
-        }
-      });
-    } catch (err) {
-      console.error(chalk.red(`Failed to delete file ${localFile}: ${err}`));
-      spinner.fail(chalk.redBright(`删除文件: ${chalk.cyan(localFile)} 失败`));
-      reject(err);
-      process.exit(1);
-    }
-  });
-};
-
 // 解压文件
 const onUnzipZip = async (remotePath: string) => {
   const spinner = ora({
@@ -200,27 +159,6 @@ const onInstall = async (remotePath: string) => {
     }
   } catch (error) {
     spinner.fail(chalk.redBright(`依赖安装失败: ${error}`));
-    process.exit(1);
-  }
-};
-
-// 重启后台项目
-const onRestartServer = async (remotePath: string) => {
-  const spinner = ora({
-    text: chalk.yellowBright(chalk.cyan('正在重启服务...'))
-  }).start();
-  try {
-    const { code: deleteCode, stderr: deleteStderr } = await ssh.execCommand('pm2 delete 0');
-    const { code: startCode, stderr: startStderr } = await ssh.execCommand(`pm2 start ${remotePath}/src/main.js`);
-    const { code: listCode, stdout } = await ssh.execCommand('pm2 list');
-    if (deleteCode === 0 && startCode === 0 && listCode === 0) {
-      spinner.succeed(chalk.greenBright(`服务启动成功: \n ${stdout} \n`));
-    } else {
-      spinner.fail(chalk.redBright(`服务启动失败: ${deleteStderr || startStderr}`));
-      process.exit(1);
-    }
-  } catch (error) {
-    spinner.fail(chalk.redBright(`服务启动失败: ${error}`));
     process.exit(1);
   }
 };
@@ -262,7 +200,7 @@ const onPublish = async ({
   projectName,
   install,
   publishConfig
-}: Omit<Options, 'isServer'> & { projectName: string; publishConfig: { porjectInfo: any; projectInfo: any } }) => {
+}: Omit<Options, 'isServer'> & { projectName: string; publishConfig: PublishConfigParams }) => {
   try {
     await onConnectServer({
       host,
@@ -271,7 +209,7 @@ const onPublish = async ({
       password
     });
     // 判断是否是服务端项目
-    if (publishConfig?.porjectInfo[projectName]?.isServer) {
+    if (getConfigFilePath(publishConfig, projectName, 'isServer')) {
       await onCompressServiceFile(localFilePath);
     } else {
       await onCompressFile(localFilePath);
@@ -283,13 +221,9 @@ const onPublish = async ({
     if (install) {
       await onInstall(remoteFilePath);
     }
-    if (publishConfig?.porjectInfo[projectName]?.isServer) {
-      await onRestartServer(remoteFilePath);
+    if (getConfigFilePath(publishConfig, projectName, 'isServer')) {
+      await onRestartServer(remoteFilePath, ssh);
     }
-    console.log(
-      beautyLog.success,
-      chalk.greenBright(chalk.bgCyan(` 🎉 🎉 🎉 ${projectName} 项目部署成功!!! 🎉 🎉 🎉 \n`))
-    );
   } catch (err) {
     console.log(beautyLog.error, chalk.red(`部署失败: ${err}`));
   } finally {
@@ -311,15 +245,6 @@ export const publish = async (projectName: string, options: Options) => {
 
   const publishConfig = getPublishConfig();
 
-  const getRemoteFilePath = () => {
-    if (publishConfig?.porjectInfo[projectName]) {
-      return publishConfig?.porjectInfo[projectName]?.remoteFilePath;
-    } else {
-      // console.log(beautyLog.warning, chalk.yellowBright(`未找到项目 ${projectName} 的配置信息`));
-      return '';
-    }
-  };
-
   const getInstallStatus = (isServer: boolean) => {
     return !!(_install || (publishConfig ? !publishConfig?.porjectInfo[projectName]?.isServer : !isServer));
   };
@@ -329,35 +254,35 @@ export const publish = async (projectName: string, options: Options) => {
       [
         {
           name: 'host',
-          type: _host || publishConfig ? null : 'text',
+          type: _host || getConfigServerInfo(publishConfig, 'host') ? null : 'text',
           message: 'host:',
-          initial: publishConfig?.serverInfo?.host || '',
+          initial: getConfigServerInfo(publishConfig, 'host') || '',
           validate: (value) => (value ? true : '请输入host')
         },
         {
           name: 'port',
-          type: _port || publishConfig ? null : 'text',
+          type: _port || getConfigServerInfo(publishConfig, 'port') ? null : 'text',
           message: '端口号:',
-          initial: publishConfig?.serverInfo?.port || '',
+          initial: getConfigServerInfo(publishConfig, 'port') || '',
           validate: (value) => (value ? true : '请输入端口号')
         },
         {
           name: 'localFilePath',
-          type: _localFilePath || publishConfig ? null : 'text',
+          type: _localFilePath || getConfigFilePath(publishConfig, projectName, 'localFilePath') ? null : 'text',
           message: '本地项目文件路径:',
           initial: process.cwd(),
           validate: (value) => (value ? true : '请输入本地项目文件路径')
         },
         {
           name: 'remoteFilePath',
-          type: _remoteFilePath || publishConfig ? null : 'text',
+          type: _remoteFilePath || getConfigFilePath(publishConfig, projectName, 'remoteFilePath') ? null : 'text',
           message: '目标服务器项目文件路径:',
-          initial: getRemoteFilePath() || '',
+          initial: getConfigFilePath(publishConfig, projectName, 'remoteFilePath') || '',
           validate: (value) => (value ? true : '请输入目标服务器项目文件路径')
         },
         {
           name: 'isServer',
-          type: _install || getRemoteFilePath() ? null : 'toggle',
+          type: _install || getConfigFilePath(publishConfig, projectName, 'isServer') !== undefined ? null : 'toggle',
           message: '是否是后台服务:',
           initial: false,
           active: 'yes',
@@ -373,9 +298,9 @@ export const publish = async (projectName: string, options: Options) => {
         },
         {
           name: 'username',
-          type: _username || publishConfig ? null : 'text',
+          type: _username || getConfigServerInfo(publishConfig, 'username') ? null : 'text',
           message: '用户名称:',
-          initial: publishConfig?.serverInfo?.username || '',
+          initial: getConfigServerInfo(publishConfig, 'username') || '',
           validate: (value) => (value ? true : '请输入用户名称')
         },
         {
@@ -398,12 +323,17 @@ export const publish = async (projectName: string, options: Options) => {
   const { host, port, username, password, localFilePath, remoteFilePath, install } = result;
 
   await onPublish({
-    host: host || publishConfig?.serverInfo?.host || _host,
-    port: port || publishConfig?.serverInfo?.port || _port,
-    username: username || publishConfig?.serverInfo?.username || _username,
+    host: host || _host || (getConfigServerInfo(publishConfig, 'host') as string),
+    port: port || _port || (getConfigServerInfo(publishConfig, 'port') as string),
+    username: username || _username || (getConfigServerInfo(publishConfig, 'username') as string),
     password: password || _password,
-    localFilePath: localFilePath || process.cwd() || _localFilePath,
-    remoteFilePath: remoteFilePath || getRemoteFilePath() || _remoteFilePath,
+    localFilePath:
+      localFilePath ||
+      _localFilePath ||
+      getConfigFilePath(publishConfig, projectName, 'localFilePath') ||
+      process.cwd(),
+    remoteFilePath:
+      remoteFilePath || _remoteFilePath || getConfigFilePath(publishConfig, projectName, 'remoteFilePath'),
     install: install || _install,
     projectName,
     publishConfig
