@@ -39,6 +39,7 @@
     "chalk": "^4.1.2",
     "cli-progress": "^3.12.0",
     "commander": "^12.0.0",
+    "dnhyxc-ci": "^0.0.12",
     "figlet": "^1.7.0",
     "fs-extra": "^11.2.0",
     "inquirer": "^8.2.0",

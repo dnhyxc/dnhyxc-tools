@@ -80,7 +80,9 @@ export const getPublishConfig = () => {
   } catch (error) {
     console.log(
       beautyLog.warning,
-      chalk.yellowBright('当前项目根目录下未配置 publish.config.js 文件，需要手动输入配置信息')
+      chalk.yellowBright(
+        `当前项目 ${process.cwd()}/publish.config.js 目录下未配置 publish.config.js 文件，需要手动输入配置信息`
+      )
     );
     return null;
   }

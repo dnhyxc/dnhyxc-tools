@@ -8,8 +8,8 @@ import chalk from 'chalk';
 import ora from 'ora';
 import {
   beautyLog,
-  getPublishConfig,
   getConfigFilePath,
+  getPublishConfig,
   getConfigServerInfo,
   onRestartServer,
   onRemoveFile
