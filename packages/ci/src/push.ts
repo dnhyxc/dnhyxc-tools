@@ -8,7 +8,8 @@ import {
   onCollectServerInfo,
   onRemoveFile,
   verifyFile,
-  onRestartNginx
+  onRestartNginx,
+  onCheckNginxConfigLocal
 } from './utils';
 import { Options, PublishConfigParams } from './typings';
 
@@ -37,6 +38,7 @@ const onPushConfig = async ({
   publishConfig
 }: Pick<Options, 'host' | 'port' | 'username' | 'password'> & { publishConfig: PublishConfigParams }) => {
   try {
+    await onCheckNginxConfigLocal();
     await onConnectServer({ host, port, username, password, ssh });
     await onPutNginxConfig(`${process.cwd()}/nginx.conf`, publishConfig);
     await onRemoveFile(`${process.cwd()}/nginx.conf`);

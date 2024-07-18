@@ -1,5 +1,13 @@
 # dnhyxc-ci
 
+## 0.0.13
+
+### Patch Changes
+
+- 增加pull、push、restart 功能
+- Updated dependencies
+  - dnhyxc-ci@0.0.13
+
 ## 0.0.12
 
 ### Patch Changes

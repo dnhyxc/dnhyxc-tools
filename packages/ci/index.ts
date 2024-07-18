@@ -61,7 +61,7 @@ program
 
 program
   .command('pull [configName]')
-  .description('获取 nginx.conf 配置')
+  .description('获取 nginx.conf 配置文件到本地')
   .option('-h, --host [host]', '输入host')
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
@@ -70,7 +70,7 @@ program
 
 program
   .command('push [configName]')
-  .description('发布 nginx.conf 配置')
+  .description('发布 nginx.conf 配置到服务器')
   .option('-h, --host [host]', '输入host')
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')

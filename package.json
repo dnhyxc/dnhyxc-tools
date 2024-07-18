@@ -1,6 +1,6 @@
 {
   "name": "dnhyxc-tools",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "工具库",
   "scripts": {
     "create": "node ./scripts/create-config.mjs",

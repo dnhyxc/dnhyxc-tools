@@ -1,7 +1,7 @@
 {
   "name": "example",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,14 +11,17 @@
     "push": "dnhyxc-ci push",
     "restart:nginx": "dnhyxc-ci restart nginx",
     "restart:node": "dnhyxc-ci restart node",
-    "publish": "dnhyxc-ci publish example"
+    "publish": "dnhyxc-ci publish example",
+    "cli": "dnhyxc create test"
   },
   "dependencies": {
-    "dnhyxc-ci": "workspace:*",
     "vue": "^3.4.31"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.5",
+    "dnhyxc": "workspace:^",
+    "dnhyxc-ci": "workspace:^",
+    "dnhyxc-vite-plugins": "workspace:^",
     "typescript": "^5.2.2",
     "vite": "^5.3.4",
     "vue-tsc": "^2.0.24"

@@ -1,7 +1,10 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+// import { ViteElectronBuildPlugin, ViteElectronRuntimePlugin } from 'dnhyxc-vite-plugins';
 
-// https://vitejs.dev/config/
+// console.log(ViteElectronBuildPlugin, 'ViteElectronBuildPlugin');
+// console.log(ViteElectronRuntimePlugin, 'ViteElectronRuntimePlugin');
+
 export default defineConfig({
-  plugins: [vue()],
-})
+  plugins: [vue()]
+});

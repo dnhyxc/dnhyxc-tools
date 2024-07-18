@@ -29,8 +29,18 @@ module.exports = {
     // 端口号
     port: 22
   },
+  // nginx配置
+  nginxInfo: {
+    remoteFilePath: '/usr/local/nginx/conf/nginx.conf',
+    restartPath: '/usr/local/nginx/sbin'
+  },
+  // node服务配置
+  serviceInfo: {
+    restartPath: '/usr/local/server'
+  },
   // 项目配置
   porjectInfo: {
+    // 前端项目一
     dnhyxc: {
       name: 'dnhyxc',
       // 本地项目路径
@@ -40,6 +50,7 @@ module.exports = {
       // 标识是否是服务端项目
       isServer: false
     },
+    // 前端项目二
     blogClientWeb: {
       name: 'html',
       // 本地项目路径
@@ -49,6 +60,7 @@ module.exports = {
       // 标识是否是服务端项目
       isServer: false
     },
+    // 前端项目三
     blogAdminWeb: {
       name: 'admin_html',
       // 本地项目路径
@@ -58,6 +70,7 @@ module.exports = {
       // 标识是否是服务端项目
       isServer: false
     },
+    // 服务端项目
     blogServerWeb: {
       name: 'server',
       // 本地项目路径
@@ -79,24 +92,54 @@ dnhyxc publish <projectName>
 
 ### 具体命令说明
 
-1. `dnhyxc -h` 或 `dnhyxc --help` 查看帮助。
+1. `dnhyxc-ci -h` 或 `dnhyxc --help` 查看帮助。
 
-2. `dnhyxc-ci publish --help` 查看发布帮助。
+2. `dnhyxc-ci -v` 或 `dnhyxc --version` 查看版本。
 
-3. `dnhyxc -v` 或 `dnhyxc --version` 查看版本。
+3. `dnhyxc-ci publish --help` 查看发布帮助。
 
-4. `dnhyxc publish <projectName>` 发布项目。
+4. `dnhyxc-ci publish <projectName>` 发布项目。
 
-5. `dnhyxc publish <projectName> -h` 携带 host。
+   4.1. `dnhyxc-ci publish <projectName> -h` 携带 host。
 
-6. `dnhyxc publish <projectName> -p` 携带端口号。
+   4.2. `dnhyxc-ci publish <projectName> -p` 携带端口号。
 
-7. `dnhyxc publish <projectName> -u` 携带用户名。
+   4.3. `dnhyxc-ci publish <projectName> -u` 携带用户名。
 
-8. `dnhyxc publish <projectName> -m` 携带密码。
+   4.4. `dnhyxc-ci publish <projectName> -m` 携带密码。
 
-9. `dnhyxc publish <projectName> -l` 携带本地项目路径。
+   4.5. `dnhyxc-ci publish <projectName> -l` 携带本地项目路径。
 
-10. `dnhyxc publish <projectName> -r` 携带远程目标文件路径。
+   4.6. `dnhyxc-ci publish <projectName> -r` 携带远程目标文件路径。
 
-11. `dnhyxc publish <projectName> -i` 是否需要安装依赖，只对发布服务代码生效。
+   4.7. `dnhyxc-ci publish <projectName> -i` 是否需要安装依赖，只对发布服务代码生效。
+
+5. `dnhyxc-ci pull` 拉取 nginx.conf 配置文件到本地。
+
+   5.1. `dnhyxc-ci pull-h` 携带 host。
+
+   5.2. `dnhyxc-ci pull -p` 携带端口号。
+
+   5.3. `dnhyxc-ci pull -u` 携带用户名。
+
+   5.4. `dnhyxc-ci pull -m` 携带密码。
+
+6. `dnhyxc-ci push` 推送 nginx.conf 配置文件到远程服务器。
+
+   6.1. `dnhyxc-ci push -h` 携带 host。
+
+   6.2. `dnhyxc-ci push -p` 携带端口号。
+
+   6.3. `dnhyxc-ci push -u` 携带用户名。
+
+   6.4. `dnhyxc-ci push -m` 携带密码。
+
+7. `dnhyxc-ci restart <serviceName>` 重启指定服务，nginx 或者 node 服务。
+
+   7.1. `dnhyxc-ci restart <serviceName> -h` 携带 host。
+
+   7.2. `dnhyxc-ci restart <serviceName> -p` 携带端口号。
+
+   7.3. `dnhyxc-ci restart <serviceName> -u` 携带用户名。
+
+   7.4. `dnhyxc-ci restart <serviceName> -m` 携带密码。

@@ -104,9 +104,6 @@ importers:
 
   example:
     dependencies:
-      dnhyxc-ci:
-        specifier: workspace:*
-        version: link:../packages/ci
       vue:
         specifier: ^3.4.31
         version: 3.4.32(typescript@5.3.3)
@@ -114,6 +111,15 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^5.0.5
         version: 5.0.5(vite@5.3.4)(vue@3.4.32)
+      dnhyxc:
+        specifier: workspace:^
+        version: link:../packages/cli
+      dnhyxc-ci:
+        specifier: workspace:^0.0.13
+        version: link:../packages/ci
+      dnhyxc-vite-plugins:
+        specifier: workspace:^
+        version: link:../packages/vite-plugins
       typescript:
         specifier: ^5.2.2
         version: 5.3.3
@@ -139,7 +145,7 @@ importers:
         specifier: ^12.0.0
         version: 12.0.0
       dnhyxc-ci:
-        specifier: ^0.0.12
+        specifier: ^0.0.13
         version: 'link:'
       figlet:
         specifier: ^1.7.0
@@ -147,12 +153,21 @@ importers:
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
+      i:
+        specifier: ^0.3.7
+        version: 0.3.7
       inquirer:
         specifier: ^8.2.0
         version: 8.2.5
+      nginx-conf:
+        specifier: ^2.1.0
+        version: 2.1.0
       node-ssh:
         specifier: ^13.2.0
         version: 13.2.0
+      npm:
+        specifier: ^10.8.2
+        version: 10.8.2
       ora:
         specifier: ^5.1.0
         version: 5.4.1
@@ -5347,6 +5362,11 @@ packages:
     hasBin: true
     dev: true
 
+  /i@0.3.7:
+    resolution: {integrity: sha512-FYz4wlXgkQwIPqhzC5TdNMLSE5+GS1IIDJZY/1ZiEPCT2S3COUVZeT5OW4BmW4r5LHLQuOosSwsvnroG9GR59Q==}
+    engines: {node: '>=0.4'}
+    dev: false
+
   /iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
     engines: {node: '>=0.10.0'}
@@ -6217,6 +6237,10 @@ packages:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
     dev: true
 
+  /nginx-conf@2.1.0:
+    resolution: {integrity: sha512-tuf9hn1Zw+KFCjnLLNM9fxBC+OLxVZPSjcYK7PpwP6i0mt5UB7zLFQBjJKHIQDbs7D7uTcOHI4ELdtW/nUKllg==}
+    dev: false
+
   /node-releases@2.0.14:
     resolution: {integrity: sha512-y10wOWt8yZpqXmOgRo77WaHEmhYQYGNA6y421PKsKYWEK8aW+cqAphborZDhqfyKrbZEN92CN1X2KbafY2s7Yw==}
     dev: true
@@ -6269,6 +6293,81 @@ packages:
     dependencies:
       path-key: 4.0.0
     dev: true
+
+  /npm@10.8.2:
+    resolution: {integrity: sha512-x/AIjFIKRllrhcb48dqUNAAZl0ig9+qMuN91RpZo3Cb2+zuibfh+KISl6+kVVyktDz230JKc208UkQwwMqyB+w==}
+    engines: {node: ^18.17.0 || >=20.5.0}
+    hasBin: true
+    dev: false
+    bundledDependencies:
+      - '@isaacs/string-locale-compare'
+      - '@npmcli/arborist'
+      - '@npmcli/config'
+      - '@npmcli/fs'
+      - '@npmcli/map-workspaces'
+      - '@npmcli/package-json'
+      - '@npmcli/promise-spawn'
+      - '@npmcli/redact'
+      - '@npmcli/run-script'
+      - '@sigstore/tuf'
+      - abbrev
+      - archy
+      - cacache
+      - chalk
+      - ci-info
+      - cli-columns
+      - fastest-levenshtein
+      - fs-minipass
+      - glob
+      - graceful-fs
+      - hosted-git-info
+      - ini
+      - init-package-json
+      - is-cidr
+      - json-parse-even-better-errors
+      - libnpmaccess
+      - libnpmdiff
+      - libnpmexec
+      - libnpmfund
+      - libnpmhook
+      - libnpmorg
+      - libnpmpack
+      - libnpmpublish
+      - libnpmsearch
+      - libnpmteam
+      - libnpmversion
+      - make-fetch-happen
+      - minimatch
+      - minipass
+      - minipass-pipeline
+      - ms
+      - node-gyp
+      - nopt
+      - normalize-package-data
+      - npm-audit-report
+      - npm-install-checks
+      - npm-package-arg
+      - npm-pick-manifest
+      - npm-profile
+      - npm-registry-fetch
+      - npm-user-validate
+      - p-map
+      - pacote
+      - parse-conflict-json
+      - proc-log
+      - qrcode-terminal
+      - read
+      - semver
+      - spdx-expression-parse
+      - ssri
+      - supports-color
+      - tar
+      - text-table
+      - tiny-relative-date
+      - treeverse
+      - validate-npm-package-name
+      - which
+      - write-file-atomic
 
   /object-inspect@1.13.1:
     resolution: {integrity: sha512-5qoj1RUiKOMsCCNLV1CBiPYE10sziTsnmNxkAI/rZhiD63CF7IqdFGC/XzjWjpSgLf0LxXX3bDFIh0E18f6UhQ==}

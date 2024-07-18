@@ -122,8 +122,7 @@ const onDeleteFile = async (localFile: string) => {
     await ssh.execCommand(`rm -rf ${localFile}`);
     spinner.succeed(chalk.greenBright(`删除文件: ${chalk.cyan(`${localFile}`)} 成功`));
   } catch (err) {
-    console.log(beautyLog.error, chalk.red(`Failed to delete dist folder: ${err}`));
-    spinner.fail(chalk.redBright(`删除文件: ${chalk.cyan(`${localFile}`)} 失败`));
+    spinner.fail(chalk.redBright(`删除文件: ${chalk.cyan(`${localFile}`)} 失败，${err}`));
     process.exit(1);
   }
 };
@@ -137,6 +136,10 @@ const onUnzipZip = async (remotePath: string) => {
     await ssh.execCommand(`unzip -o ${`${remotePath}/dist.zip`} -d ${remotePath}`);
     spinner.succeed(chalk.greenBright(`解压文件: ${chalk.cyan(`${remotePath}/dist.zip`)} 成功`));
     await onDeleteFile(`${remotePath}/dist.zip`);
+    console.log(
+      `\n${beautyLog.success}`,
+      chalk.greenBright(`${chalk.bold(`🎉 🎉 🎉 前端资源部署成功: ${chalk.cyan(`${remotePath}`)} 🎉 🎉 🎉`)}\n`)
+    );
   } catch (err) {
     console.log(beautyLog.error, chalk.red(`Failed to unzip dist.zip: ${err}`));
     spinner.fail(chalk.redBright(`解压文件: ${chalk.cyan(`${remotePath}/dist.zip`)} 失败`));
@@ -254,35 +257,37 @@ export const publish = async (projectName: string, options: Options) => {
       [
         {
           name: 'host',
-          type: _host || getConfigServerInfo(publishConfig, 'host') ? null : 'text',
+          type: _host || getConfigServerInfo(publishConfig, 'host', true) ? null : 'text',
           message: 'host:',
           initial: getConfigServerInfo(publishConfig, 'host') || '',
           validate: (value) => (value ? true : '请输入host')
         },
         {
           name: 'port',
-          type: _port || getConfigServerInfo(publishConfig, 'port') ? null : 'text',
+          type: _port || getConfigServerInfo(publishConfig, 'port', true) ? null : 'text',
           message: '端口号:',
           initial: getConfigServerInfo(publishConfig, 'port') || '',
           validate: (value) => (value ? true : '请输入端口号')
         },
         {
           name: 'localFilePath',
-          type: _localFilePath || getConfigFilePath(publishConfig, projectName, 'localFilePath') ? null : 'text',
+          type: _localFilePath || getConfigFilePath(publishConfig, projectName, 'localFilePath', true) ? null : 'text',
           message: '本地项目文件路径:',
           initial: process.cwd(),
           validate: (value) => (value ? true : '请输入本地项目文件路径')
         },
         {
           name: 'remoteFilePath',
-          type: _remoteFilePath || getConfigFilePath(publishConfig, projectName, 'remoteFilePath') ? null : 'text',
+          type:
+            _remoteFilePath || getConfigFilePath(publishConfig, projectName, 'remoteFilePath', true) ? null : 'text',
           message: '目标服务器项目文件路径:',
           initial: getConfigFilePath(publishConfig, projectName, 'remoteFilePath') || '',
           validate: (value) => (value ? true : '请输入目标服务器项目文件路径')
         },
         {
           name: 'isServer',
-          type: _install || getConfigFilePath(publishConfig, projectName, 'isServer') !== undefined ? null : 'toggle',
+          type:
+            _install || getConfigFilePath(publishConfig, projectName, 'isServer', true) !== undefined ? null : 'toggle',
           message: '是否是后台服务:',
           initial: false,
           active: 'yes',
@@ -298,7 +303,7 @@ export const publish = async (projectName: string, options: Options) => {
         },
         {
           name: 'username',
-          type: _username || getConfigServerInfo(publishConfig, 'username') ? null : 'text',
+          type: _username || getConfigServerInfo(publishConfig, 'username', true) ? null : 'text',
           message: '用户名称:',
           initial: getConfigServerInfo(publishConfig, 'username') || '',
           validate: (value) => (value ? true : '请输入用户名称')
