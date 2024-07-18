@@ -1,6 +1,6 @@
 ### dnhyxc-ci 安装
 
-全局安装 `@dnhyxc/ci`：可以在各个项目中使用，无需单独为每个项目安装。
+全局安装 `dnhyxc-ci`：可以在各个项目中使用，无需单独为每个项目安装。
 
 ```yaml
 npm install -g dnhyxc-ci
@@ -14,7 +14,7 @@ npm install --save-dev dnhyxc-ci
 
 > 注意：如果是发布后台服务，在项目中单独安装 `dnhyxc-ci` 后，需要将 `package.json` 中的 `dnhyxc-ci` 包名删除，因为发布服务代码时，会将 `package.json` 发布到服务器上，从而导致服务器上安装依赖时可能会因为 `dnhyxc-ci` 包的 node 版本问题导致安装失败。
 
-### 使用方法
+### 发布配置文件
 
 首先需要在需要发布的项目根目录下，创建 `publish.config.js` 配置文件，其中内容格式如下：
 
@@ -84,62 +84,100 @@ module.exports = {
 };
 ```
 
-上述配置文件配置完成之后，通过如下命令部署项目，其中 projectName 为项目名称，采用驼峰命名，与上述 porjectInfo 配置的项目名称一致。
+### 查看帮助
+
+通过 `dnhyxc-ci -h` 或 `dnhyxc --help` 查看帮助。
 
 ```yaml
-dnhyxc publish <projectName>
+dnhyxc-ci -h
+
+# 或
+
+dnhyxc --help
 ```
 
-### 具体命令说明
+### 发布项目
 
-1. `dnhyxc-ci -h` 或 `dnhyxc --help` 查看帮助。
+通过 `dnhyxc-ci publish <projectName>` 命令发布项目，其中 `<projectName>` 为 `publish.config.js` 配置文件中 `projectInfo` 下的项目名称。
 
-2. `dnhyxc-ci -v` 或 `dnhyxc --version` 查看版本。
+```yaml
+dnhyxc-ci publish projectName
+```
 
-3. `dnhyxc-ci publish --help` 查看发布帮助。
+#### 发布项目相关命令说明
 
-4. `dnhyxc-ci publish <projectName>` 发布项目。
+```yaml
+dnhyxc-ci publish <projectName> -h  # 携带服务器 host。
 
-   4.1. `dnhyxc-ci publish <projectName> -h` 携带 host。
+dnhyxc-ci publish <projectName> -p  # 携带服务器端口号。
 
-   4.2. `dnhyxc-ci publish <projectName> -p` 携带端口号。
+dnhyxc-ci publish <projectName> -u  # 携带服务器用户名。
 
-   4.3. `dnhyxc-ci publish <projectName> -u` 携带用户名。
+dnhyxc-ci publish <projectName> -m  # 携带服务器密码。
 
-   4.4. `dnhyxc-ci publish <projectName> -m` 携带密码。
+dnhyxc-ci publish <projectName> -l  # 携带本地项目路径。
 
-   4.5. `dnhyxc-ci publish <projectName> -l` 携带本地项目路径。
+dnhyxc-ci publish <projectName> -r  # 携带远程目标文件路径。
 
-   4.6. `dnhyxc-ci publish <projectName> -r` 携带远程目标文件路径。
+dnhyxc-ci publish <projectName> -i  # 是否需要安装依赖，只对发布服务代码生效。
+```
 
-   4.7. `dnhyxc-ci publish <projectName> -i` 是否需要安装依赖，只对发布服务代码生效。
+### 拉取远程 nginx 配置文件
 
-5. `dnhyxc-ci pull` 拉取 nginx.conf 配置文件到本地。
+通过 `dnhyxc-ci pull` 命令拉取远程 nginx 配置文件到本地。
 
-   5.1. `dnhyxc-ci pull-h` 携带 host。
+```yaml
+dnhyxc-ci pull
+```
 
-   5.2. `dnhyxc-ci pull -p` 携带端口号。
+#### 拉取远程 nginx 配置文件相关命令说明
 
-   5.3. `dnhyxc-ci pull -u` 携带用户名。
+```yaml
+dnhyxc-ci pull -h  # 携带服务器 host。
 
-   5.4. `dnhyxc-ci pull -m` 携带密码。
+dnhyxc-ci pull -p  # 携带服务器端口号。
 
-6. `dnhyxc-ci push` 推送 nginx.conf 配置文件到远程服务器。
+dnhyxc-ci pull -u  # 携带服务器用户名。
 
-   6.1. `dnhyxc-ci push -h` 携带 host。
+dnhyxc-ci pull -m  # 携带服务器密码。
+```
 
-   6.2. `dnhyxc-ci push -p` 携带端口号。
+### 推送 nginx 配置文件到远程服务器
 
-   6.3. `dnhyxc-ci push -u` 携带用户名。
+通过 `dnhyxc-ci push` 命令推送本地 nginx 配置文件到远程服务器。
 
-   6.4. `dnhyxc-ci push -m` 携带密码。
+```yaml
+dnhyxc-ci push
+```
 
-7. `dnhyxc-ci restart <serviceName>` 重启指定服务，nginx 或者 node 服务。
+#### 推送 nginx 配置文件到远程服务器相关命令说明
 
-   7.1. `dnhyxc-ci restart <serviceName> -h` 携带 host。
+```yaml
+dnhyxc-ci push -h  # 携带服务器 host。
 
-   7.2. `dnhyxc-ci restart <serviceName> -p` 携带端口号。
+dnhyxc-ci push -p  # 携带服务器端口号。
 
-   7.3. `dnhyxc-ci restart <serviceName> -u` 携带用户名。
+dnhyxc-ci push -u  # 携带服务器用户名。
 
-   7.4. `dnhyxc-ci restart <serviceName> -m` 携带密码。
+dnhyxc-ci push -m  # 携带服务器密码。
+```
+
+### 重启 nginx 或 node 服务
+
+通过 `dnhyxc-ci restart <serviceName>` 命令重启 nginx 或 node 服务。
+
+```yaml
+dnhyxc-ci restart serviceName
+```
+
+#### 重启 nginx 或 node 服务相关命令说明
+
+```yaml
+dnhyxc-ci restart <serviceName> -h  # 携带服务器 host。
+
+dnhyxc-ci restart <serviceName> -p  # 携带服务器端口号。
+
+dnhyxc-ci restart <serviceName> -u  # 携带服务器用户名。
+
+dnhyxc-ci restart <serviceName> -m  # 携带服务器密码。
+```
