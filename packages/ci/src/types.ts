@@ -23,25 +23,20 @@ export interface CollectInfoParams extends Partial<Options> {
   serviceRestartPath?: string;
 }
 
-export interface PublishConfigParams {
-  serverInfo: {
-    host: string;
-    port: string;
-    username: string;
-  };
-  nginxInfo: {
-    restartPath: string;
-    remoteFilePath: string;
-  };
-  serviceInfo: {
-    restartPath: string;
-  };
-  projectInfo: {
-    [key: string]: ProjectInfo;
-  };
+export interface ServerInfo {
+  host: string;
+  port: string;
+  username: string;
 }
 
-export type ConfigType = keyof PublishConfigParams;
+export interface NginxInfo {
+  restartPath: string;
+  remoteFilePath: string;
+}
+
+export interface ServiceInfo {
+  restartPath: string;
+}
 
 export interface ProjectInfo {
   name: string;
@@ -49,3 +44,12 @@ export interface ProjectInfo {
   remoteFilePath: string;
   isServer: boolean;
 }
+
+export interface PublishConfigParams {
+  serverInfo: ServerInfo;
+  nginxInfo: NginxInfo;
+  serviceInfo: ServiceInfo;
+  [projectName: string]: ProjectInfo | ServerInfo | NginxInfo | ServiceInfo;
+}
+
+export type ConfigType = keyof PublishConfigParams;

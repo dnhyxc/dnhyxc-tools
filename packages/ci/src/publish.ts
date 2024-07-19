@@ -8,13 +8,13 @@ import chalk from 'chalk';
 import ora from 'ora';
 import {
   beautyLog,
-  getConfigFilePath,
   getPublishConfig,
-  getConfigServerInfo,
+  onConnectServer,
+  getPublishConfigInfo,
   onRestartServer,
   onRemoveFile
 } from './utils';
-import { Options, PublishConfigParams, PublishCollectParams } from './types';
+import { Options, PublishConfigParams, PublishCollectParams, ProjectInfo } from './types';
 
 let result: Partial<Options> = {};
 
@@ -24,22 +24,22 @@ const ssh = new NodeSSH();
 const onCompressFile = async (localFilePath: string) => {
   return new Promise((resolve, reject) => {
     const spinner = ora({
-      text: chalk.yellowBright(`正在压缩文件: ${chalk.cyan(`${localFilePath}/dist`)}`)
+      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)}`)
     }).start();
     const archive = archiver('zip', {
       zlib: { level: 9 }
     }).on('error', (err: Error) => {
-      console.log(beautyLog.error, chalk.red(`压缩文件失败: ${err}`));
+      console.log(beautyLog.error, chalk.red(`压缩本地文件失败: ${err}`));
     });
     const output = fs.createWriteStream(`${localFilePath}/dist.zip`);
     output.on('close', (err: Error) => {
       if (err) {
         spinner.fail(chalk.redBright(`压缩文件: ${chalk.cyan(`${localFilePath}/dist`)} 失败`));
-        console.log(beautyLog.error, chalk.red(`压缩文件失败: ${err}`));
+        console.log(beautyLog.error, chalk.red(`压缩本地文件失败: ${err}`));
         reject(err);
         process.exit(1);
       }
-      spinner.succeed(chalk.greenBright(`压缩文件: ${chalk.cyan(`${localFilePath}/dist`)} 成功`));
+      spinner.succeed(chalk.greenBright(`压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)} 成功`));
       resolve(1);
     });
     archive.pipe(output);
@@ -53,7 +53,7 @@ const onCompressFile = async (localFilePath: string) => {
 const onCompressServiceFile = async (localFilePath: string) => {
   return new Promise((resolve, reject) => {
     const spinner = ora({
-      text: chalk.yellowBright(`正在压缩文件: ${chalk.cyan(`${localFilePath}/dist`)}`)
+      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)}`)
     }).start();
     const srcPath = `${localFilePath}/src`;
     const uploadPath = `${srcPath}/upload`;
@@ -62,17 +62,17 @@ const onCompressServiceFile = async (localFilePath: string) => {
     const archive = archiver('zip', {
       zlib: { level: 9 }
     }).on('error', (err: Error) => {
-      console.log(beautyLog.error, chalk.red(`压缩文件失败: ${err}`));
+      console.log(beautyLog.error, chalk.red(`压缩本地文件失败: ${err}`));
     });
     const output = fs.createWriteStream(`${localFilePath}/dist.zip`);
     output.on('close', (err: Error) => {
       if (!err) {
         fs.moveSync(tempUploadPath, uploadPath, { overwrite: true });
-        spinner.succeed(chalk.greenBright(`压缩文件: ${chalk.cyan(`${localFilePath}/src`)} 等文件成功`));
+        spinner.succeed(chalk.greenBright(`压缩本地文件: ${chalk.cyan(`${localFilePath}/src`)} 等文件成功`));
         resolve(1);
       } else {
-        spinner.fail(chalk.redBright(`压缩文件: ${chalk.cyan(`${localFilePath}/src`)} 等文件失败`));
-        console.log(beautyLog.error, chalk.red(`压缩文件失败: ${err}`));
+        spinner.fail(chalk.redBright(`压缩本地文件: ${chalk.cyan(`${localFilePath}/src`)} 等文件失败`));
+        console.log(beautyLog.error, chalk.red(`压缩本地文件失败: ${err}`));
         reject(err);
         process.exit(1);
       }
@@ -116,33 +116,34 @@ const onPutFile = async (localFilePath: string, remoteFilePath: string) => {
 // 删除文件
 const onDeleteFile = async (localFile: string) => {
   const spinner = ora({
-    text: chalk.yellowBright(`正在删除文件: ${chalk.cyan(localFile)}`)
+    text: chalk.yellowBright(`正在删除服务器文件: ${chalk.cyan(localFile)}`)
   }).start();
   try {
     await ssh.execCommand(`rm -rf ${localFile}`);
-    spinner.succeed(chalk.greenBright(`删除文件: ${chalk.cyan(`${localFile}`)} 成功`));
+    spinner.succeed(chalk.greenBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 成功`));
   } catch (err) {
-    spinner.fail(chalk.redBright(`删除文件: ${chalk.cyan(`${localFile}`)} 失败，${err}`));
+    spinner.fail(chalk.redBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 失败，${err}`));
     process.exit(1);
   }
 };
 
 // 解压文件
-const onUnzipZip = async (remotePath: string) => {
+const onUnzipZip = async (remotePath: string, isServer: boolean) => {
   const spinner = ora({
-    text: chalk.yellowBright(`正在解压文件: ${chalk.cyan(`${remotePath}/dist.zip`)}`)
+    text: chalk.yellowBright(`正在解压服务器文件: ${chalk.cyan(`${remotePath}/dist.zip`)}`)
   }).start();
   try {
     await ssh.execCommand(`unzip -o ${`${remotePath}/dist.zip`} -d ${remotePath}`);
-    spinner.succeed(chalk.greenBright(`解压文件: ${chalk.cyan(`${remotePath}/dist.zip`)} 成功`));
+    spinner.succeed(chalk.greenBright(`解压服务器文件: ${chalk.cyan(`${remotePath}/dist.zip`)} 成功`));
     await onDeleteFile(`${remotePath}/dist.zip`);
-    console.log(
-      `\n${beautyLog.success}`,
-      chalk.greenBright(`${chalk.bold(`🎉 🎉 🎉 前端资源部署成功: ${chalk.cyan(`${remotePath}`)} 🎉 🎉 🎉`)}\n`)
-    );
+    !isServer &&
+      console.log(
+        `\n${beautyLog.success}`,
+        chalk.greenBright(`${chalk.bold(`🎉 🎉 🎉 前端资源部署成功: ${chalk.cyan(`${remotePath}`)} 🎉 🎉 🎉`)}\n`)
+      );
   } catch (err) {
     console.log(beautyLog.error, chalk.red(`Failed to unzip dist.zip: ${err}`));
-    spinner.fail(chalk.redBright(`解压文件: ${chalk.cyan(`${remotePath}/dist.zip`)} 失败`));
+    spinner.fail(chalk.redBright(`解压服务器文件: ${chalk.cyan(`${remotePath}/dist.zip`)} 失败`));
     process.exit(1);
   }
 };
@@ -166,32 +167,6 @@ const onInstall = async (remotePath: string) => {
   }
 };
 
-// 连接服务器
-const onConnectServer = async ({
-  host,
-  port,
-  username,
-  password
-}: Pick<Options, 'host' | 'port' | 'username' | 'password'>) => {
-  const spinner = ora({
-    text: chalk.yellowBright(chalk.cyan(`正在连接服务器: ${username}@${host}:${port} ...`))
-  }).start();
-  try {
-    // 连接到服务器
-    await ssh.connect({
-      host,
-      username,
-      port,
-      password,
-      tryKeyboard: true
-    });
-    spinner.succeed(chalk.greenBright('服务器连接成功!!!'));
-  } catch (err) {
-    spinner.fail(chalk.redBright(`服务器连接失败: ${err}`));
-    process.exit(1);
-  }
-};
-
 // 连接服务器并上传文件
 const onPublish = async ({
   username,
@@ -209,22 +184,24 @@ const onPublish = async ({
       host,
       username,
       port,
-      password
+      password,
+      ssh
     });
     // 判断是否是服务端项目
-    if (getConfigFilePath(publishConfig, projectName, 'isServer')) {
+    const isServer = !!getPublishConfigInfo(publishConfig, projectName, 'isServer');
+    if (isServer) {
       await onCompressServiceFile(localFilePath);
     } else {
       await onCompressFile(localFilePath);
     }
     await onPutFile(localFilePath, remoteFilePath);
     await onDeleteFile(`${remoteFilePath}/dist`);
-    await onUnzipZip(remoteFilePath);
+    await onUnzipZip(remoteFilePath, isServer);
     await onRemoveFile(`${localFilePath}/dist.zip`);
     if (install) {
       await onInstall(remoteFilePath);
     }
-    if (getConfigFilePath(publishConfig, projectName, 'isServer')) {
+    if (getPublishConfigInfo(publishConfig, projectName, 'isServer')) {
       await onRestartServer(remoteFilePath, ssh);
     }
   } catch (err) {
@@ -250,28 +227,29 @@ export const publish = async (projectName: string, options: Options) => {
 
   try {
     const getInstallStatus = (isServer: boolean) => {
-      return !!(_install || (publishConfig ? !publishConfig?.projectInfo[projectName]?.isServer : !isServer));
+      return !!(_install || (publishConfig ? !(publishConfig?.[projectName] as ProjectInfo)?.isServer : !isServer));
     };
 
     result = await prompts(
       [
         {
           name: 'host',
-          type: _host || getConfigServerInfo(publishConfig, 'serverInfo', 'host', true) ? null : 'text',
+          type: _host || getPublishConfigInfo(publishConfig, 'serverInfo', 'host', true) ? null : 'text',
           message: 'host:',
-          initial: getConfigServerInfo(publishConfig, 'serverInfo', 'host') || '',
+          initial: getPublishConfigInfo(publishConfig, 'serverInfo', 'host') || '',
           validate: (value) => (value ? true : '请输入host')
         },
         {
           name: 'port',
-          type: _port || getConfigServerInfo(publishConfig, 'serverInfo', 'port', true) ? null : 'text',
+          type: _port || getPublishConfigInfo(publishConfig, 'serverInfo', 'port', true) ? null : 'text',
           message: '端口号:',
-          initial: getConfigServerInfo(publishConfig, 'serverInfo', 'port') || '',
+          initial: getPublishConfigInfo(publishConfig, 'serverInfo', 'port') || '',
           validate: (value) => (value ? true : '请输入端口号')
         },
         {
           name: 'localFilePath',
-          type: _localFilePath || getConfigFilePath(publishConfig, projectName, 'localFilePath', true) ? null : 'text',
+          type:
+            _localFilePath || getPublishConfigInfo(publishConfig, projectName, 'localFilePath', true) ? null : 'text',
           message: '本地项目文件路径:',
           initial: process.cwd(),
           validate: (value) => (value ? true : '请输入本地项目文件路径')
@@ -279,15 +257,17 @@ export const publish = async (projectName: string, options: Options) => {
         {
           name: 'remoteFilePath',
           type:
-            _remoteFilePath || getConfigFilePath(publishConfig, projectName, 'remoteFilePath', true) ? null : 'text',
+            _remoteFilePath || getPublishConfigInfo(publishConfig, projectName, 'remoteFilePath', true) ? null : 'text',
           message: '目标服务器项目文件路径:',
-          initial: getConfigFilePath(publishConfig, projectName, 'remoteFilePath') || '',
+          initial: getPublishConfigInfo(publishConfig, projectName, 'remoteFilePath') || '',
           validate: (value) => (value ? true : '请输入目标服务器项目文件路径')
         },
         {
           name: 'isServer',
           type:
-            _install || getConfigFilePath(publishConfig, projectName, 'isServer', true) !== undefined ? null : 'toggle',
+            _install || getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
+              ? null
+              : 'toggle',
           message: '是否是后台服务:',
           initial: false,
           active: 'yes',
@@ -303,9 +283,9 @@ export const publish = async (projectName: string, options: Options) => {
         },
         {
           name: 'username',
-          type: _username || getConfigServerInfo(publishConfig, 'serverInfo', 'username', true) ? null : 'text',
+          type: _username || getPublishConfigInfo(publishConfig, 'serverInfo', 'username', true) ? null : 'text',
           message: '用户名称:',
-          initial: getConfigServerInfo(publishConfig, 'serverInfo', 'username') || '',
+          initial: getPublishConfigInfo(publishConfig, 'serverInfo', 'username') || '',
           validate: (value) => (value ? true : '请输入用户名称')
         },
         {
@@ -331,17 +311,19 @@ export const publish = async (projectName: string, options: Options) => {
   const { host, port, username, password, localFilePath, remoteFilePath, install } = result;
 
   await onPublish({
-    host: host || _host || publishConfig?.serverInfo?.host,
-    port: port || _port || publishConfig?.serverInfo?.port,
-    username: username || _username || publishConfig?.serverInfo?.username,
+    host: host || _host || (getPublishConfigInfo(publishConfig, 'serverInfo', 'host') as string),
+    port: port || _port || (getPublishConfigInfo(publishConfig, 'serverInfo', 'port') as string),
+    username: username || _username || (getPublishConfigInfo(publishConfig, 'serverInfo', 'username') as string),
     password: password || _password,
     localFilePath:
       localFilePath ||
       _localFilePath ||
-      (getConfigFilePath(publishConfig, projectName, 'localFilePath') as string) ||
+      (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
       process.cwd(),
     remoteFilePath:
-      remoteFilePath || _remoteFilePath || (getConfigFilePath(publishConfig, projectName, 'remoteFilePath') as string),
+      remoteFilePath ||
+      _remoteFilePath ||
+      (getPublishConfigInfo(publishConfig, projectName, 'remoteFilePath') as string),
     install: install || _install,
     projectName,
     publishConfig

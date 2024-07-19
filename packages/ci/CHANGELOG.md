@@ -1,5 +1,13 @@
 # dnhyxc-ci
 
+## 0.0.15
+
+### Patch Changes
+
+- 优化无发布配置文件的情况
+- Updated dependencies
+  - dnhyxc-ci@0.0.15
+
 ## 0.0.14
 
 ### Patch Changes
