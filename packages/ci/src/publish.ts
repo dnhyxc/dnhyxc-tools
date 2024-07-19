@@ -248,11 +248,11 @@ export const publish = async (projectName: string, options: Options) => {
 
   const publishConfig: PublishConfigParams = getPublishConfig();
 
-  const getInstallStatus = (isServer: boolean) => {
-    return !!(_install || (publishConfig ? !publishConfig?.projectInfo[projectName]?.isServer : !isServer));
-  };
-
   try {
+    const getInstallStatus = (isServer: boolean) => {
+      return !!(_install || (publishConfig ? !publishConfig?.projectInfo[projectName]?.isServer : !isServer));
+    };
+
     result = await prompts(
       [
         {
@@ -317,13 +317,14 @@ export const publish = async (projectName: string, options: Options) => {
       ],
       {
         onCancel: () => {
-          console.log(`\n${(beautyLog.error, chalk.red('已取消输入配置信息'))}\n`);
+          console.log(`\n${beautyLog.error}`, chalk.red('已取消输入配置信息\n'));
           process.exit(1);
         }
       }
     );
   } catch (err) {
-    console.log(beautyLog.error, chalk.red(err));
+    console.log(`\n${beautyLog.error}`, `${chalk.red('请检查 publish.config.json 发布配置或者输入信息是否有误!')}\n`);
+    console.log(beautyLog.error, chalk.red(`${err}!\n`));
     process.exit(1);
   }
 

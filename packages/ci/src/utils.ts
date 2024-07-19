@@ -277,7 +277,7 @@ export const onCollectServerInfo = async ({
       ],
       {
         onCancel: () => {
-          console.log(`\n${(beautyLog.error, chalk.red('已取消输入配置信息'))}\n`);
+          console.log(`\n${beautyLog.error}`, chalk.red('已取消输入配置信息\n'));
           process.exit(1);
         }
       }
@@ -326,7 +326,9 @@ export const onCheckNginxConfigLocal = () => {
         }
         const server = conf?.nginx?.http?.[0].server;
         if (server?.length) {
-          spinner.succeed(chalk.greenBright(`已将相关配置存入本地 ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 文件中`));
+          spinner.succeed(
+            chalk.greenBright(`已将 nginx 相关配置存入本地 ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 文件中`)
+          );
         } else {
           spinner.fail(chalk.redBright(`本地 ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 文件中配置存在问题`));
           process.exit(1);
