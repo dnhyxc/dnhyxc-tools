@@ -1,5 +1,13 @@
 # dnhyxc-ci
 
+## 0.0.14
+
+### Patch Changes
+
+- 优化 pull、push、restart，支持在无配置的情况下使用
+- Updated dependencies
+  - dnhyxc-ci@0.0.14
+
 ## 0.0.13
 
 ### Patch Changes

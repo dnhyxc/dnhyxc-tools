@@ -1,6 +1,6 @@
 {
   "name": "dnhyxc-ci",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "A set of CI/CD tools",
   "main": "dist/ci.cjs",
   "bin": {
@@ -39,7 +39,7 @@
     "chalk": "^4.1.2",
     "cli-progress": "^3.12.0",
     "commander": "^12.0.0",
-    "dnhyxc-ci": "^0.0.13",
+    "dnhyxc-ci": "^0.0.14",
     "figlet": "^1.7.0",
     "fs-extra": "^11.2.0",
     "i": "^0.3.7",

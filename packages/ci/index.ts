@@ -7,7 +7,7 @@ import { publish } from '@ci/publish';
 import { pull } from '@ci/pull';
 import { push } from '@ci/push';
 import { restart } from '@ci/restart';
-import { Options } from '@ci/typings';
+import { CollectInfoParams, Options } from '@ci/types';
 import pkg from './package.json';
 
 program.version(updateVersion(pkg.version), '-v, --version');
@@ -24,15 +24,15 @@ const publishCallback = async (name: string, options: Options) => {
   await publish(name, options);
 };
 
-const pullNginxConfCallback = async (name: string, option: Options) => {
+const pullNginxConfCallback = async (name: string, option: Options & CollectInfoParams) => {
   await pull(name, option);
 };
 
-const pushNginxConfCallback = async (name: string, option: Options) => {
+const pushNginxConfCallback = async (name: string, option: Options & CollectInfoParams) => {
   await push(name, option);
 };
 
-const restartCallback = async (name: string, option: Options) => {
+const restartCallback = async (name: string, option: Options & CollectInfoParams) => {
   await restart(name, option);
 };
 
@@ -66,6 +66,7 @@ program
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
   .option('-m, --password [password]', '输入密码')
+  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径')
   .action(pullNginxConfCallback);
 
 program
@@ -75,6 +76,8 @@ program
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
   .option('-m, --password [password]', '输入密码')
+  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径')
+  .option('-nrp, --nginxRestartPath [nginxRestartPath]', '输入服务器 nginx 重启路径')
   .action(pushNginxConfCallback);
 
 program
@@ -84,6 +87,9 @@ program
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
   .option('-m, --password [password]', '输入密码')
+  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径')
+  .option('-nrp, --nginxRestartPath [nginxRestartPath]', '输入服务器 nginx 重启路径')
+  .option('-srp, --serviceRestartPath [serviceRestartPath]', '输入服务器 node 重启路径')
   .action((serviceName, option) => {
     const validatedServiceName = validateServiceName(serviceName);
     restartCallback(validatedServiceName, option);

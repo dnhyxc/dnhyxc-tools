@@ -14,7 +14,7 @@ import {
   onRestartServer,
   onRemoveFile
 } from './utils';
-import { Options, PublishConfigParams } from './typings';
+import { Options, PublishConfigParams, PublishCollectParams } from './types';
 
 let result: Partial<Options> = {};
 
@@ -203,7 +203,7 @@ const onPublish = async ({
   projectName,
   install,
   publishConfig
-}: Omit<Options, 'isServer'> & { projectName: string; publishConfig: PublishConfigParams }) => {
+}: PublishCollectParams) => {
   try {
     await onConnectServer({
       host,
@@ -246,10 +246,10 @@ export const publish = async (projectName: string, options: Options) => {
     install: _install
   } = options;
 
-  const publishConfig = getPublishConfig();
+  const publishConfig: PublishConfigParams = getPublishConfig();
 
   const getInstallStatus = (isServer: boolean) => {
-    return !!(_install || (publishConfig ? !publishConfig?.porjectInfo[projectName]?.isServer : !isServer));
+    return !!(_install || (publishConfig ? !publishConfig?.projectInfo[projectName]?.isServer : !isServer));
   };
 
   try {
@@ -257,16 +257,16 @@ export const publish = async (projectName: string, options: Options) => {
       [
         {
           name: 'host',
-          type: _host || getConfigServerInfo(publishConfig, 'host', true) ? null : 'text',
+          type: _host || getConfigServerInfo(publishConfig, 'serverInfo', 'host', true) ? null : 'text',
           message: 'host:',
-          initial: getConfigServerInfo(publishConfig, 'host') || '',
+          initial: getConfigServerInfo(publishConfig, 'serverInfo', 'host') || '',
           validate: (value) => (value ? true : '请输入host')
         },
         {
           name: 'port',
-          type: _port || getConfigServerInfo(publishConfig, 'port', true) ? null : 'text',
+          type: _port || getConfigServerInfo(publishConfig, 'serverInfo', 'port', true) ? null : 'text',
           message: '端口号:',
-          initial: getConfigServerInfo(publishConfig, 'port') || '',
+          initial: getConfigServerInfo(publishConfig, 'serverInfo', 'port') || '',
           validate: (value) => (value ? true : '请输入端口号')
         },
         {
@@ -303,9 +303,9 @@ export const publish = async (projectName: string, options: Options) => {
         },
         {
           name: 'username',
-          type: _username || getConfigServerInfo(publishConfig, 'username', true) ? null : 'text',
+          type: _username || getConfigServerInfo(publishConfig, 'serverInfo', 'username', true) ? null : 'text',
           message: '用户名称:',
-          initial: getConfigServerInfo(publishConfig, 'username') || '',
+          initial: getConfigServerInfo(publishConfig, 'serverInfo', 'username') || '',
           validate: (value) => (value ? true : '请输入用户名称')
         },
         {
@@ -317,28 +317,30 @@ export const publish = async (projectName: string, options: Options) => {
       ],
       {
         onCancel: () => {
-          throw new Error('User cancelled');
+          console.log(`\n${(beautyLog.error, chalk.red('已取消输入配置信息'))}\n`);
+          process.exit(1);
         }
       }
     );
-  } catch (cancelled) {
+  } catch (err) {
+    console.log(beautyLog.error, chalk.red(err));
     process.exit(1);
   }
 
   const { host, port, username, password, localFilePath, remoteFilePath, install } = result;
 
   await onPublish({
-    host: host || _host || (getConfigServerInfo(publishConfig, 'host') as string),
-    port: port || _port || (getConfigServerInfo(publishConfig, 'port') as string),
-    username: username || _username || (getConfigServerInfo(publishConfig, 'username') as string),
+    host: host || _host || publishConfig?.serverInfo?.host,
+    port: port || _port || publishConfig?.serverInfo?.port,
+    username: username || _username || publishConfig?.serverInfo?.username,
     password: password || _password,
     localFilePath:
       localFilePath ||
       _localFilePath ||
-      getConfigFilePath(publishConfig, projectName, 'localFilePath') ||
+      (getConfigFilePath(publishConfig, projectName, 'localFilePath') as string) ||
       process.cwd(),
     remoteFilePath:
-      remoteFilePath || _remoteFilePath || getConfigFilePath(publishConfig, projectName, 'remoteFilePath'),
+      remoteFilePath || _remoteFilePath || (getConfigFilePath(publishConfig, projectName, 'remoteFilePath') as string),
     install: install || _install,
     projectName,
     publishConfig

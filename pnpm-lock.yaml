@@ -115,7 +115,7 @@ importers:
         specifier: workspace:^
         version: link:../packages/cli
       dnhyxc-ci:
-        specifier: workspace:^0.0.13
+        specifier: workspace:^
         version: link:../packages/ci
       dnhyxc-vite-plugins:
         specifier: workspace:^
