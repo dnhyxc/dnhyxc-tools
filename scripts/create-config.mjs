@@ -46,6 +46,7 @@ const copyFileSync = ({ templatePath, projectPath, projectName }) => {
   if (path.basename(templatePath) === 'package.json') {
     const pkg = JSON.parse(fs.readFileSync(templatePath, 'utf-8'));
     pkg.name = `${projectName}`;
+    pkg.homepage = `https://github.com/dnhyxc/dnhyxc-tools/tree/master/packages/${projectName}#readme`;
     fs.writeFileSync(projectPath, JSON.stringify(pkg, null, 2) + '\n');
     return;
   }

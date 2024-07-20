@@ -20,6 +20,14 @@
     "name": "dnhyxc",
     "github": "https://github.com/dnhyxc"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dnhyxc/dnhyxc-tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dnhyxc/dnhyxc-tools/issues"
+  },
+  "homepage": "https://github.com/dnhyxc/dnhyxc-tools/tree/master/packages/cli#readme",
   "license": "ISC",
   "type": "module",
   "files": [
