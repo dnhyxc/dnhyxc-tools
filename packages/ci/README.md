@@ -39,47 +39,45 @@ module.exports = {
     restartPath: '/usr/local/server'
   },
   // 项目配置
-  porjectInfo: {
-    // 前端项目一
-    dnhyxc: {
-      name: 'dnhyxc',
-      // 本地项目路径
-      localFilePath: '/Users/dnhyxc/Documents/code/dnhyxc',
-      // 目标服务器项目文件路径
-      remoteFilePath: '/usr/local/nginx/dnhyxc',
-      // 标识是否是服务端项目
-      isServer: false
-    },
-    // 前端项目二
-    blogClientWeb: {
-      name: 'html',
-      // 本地项目路径
-      localFilePath: '/Users/dnhyxc/Documents/code/blog-client-web',
-      // 目标服务器项目文件路径
-      remoteFilePath: '/usr/local/nginx/html',
-      // 标识是否是服务端项目
-      isServer: false
-    },
-    // 前端项目三
-    blogAdminWeb: {
-      name: 'admin_html',
-      // 本地项目路径
-      localFilePath: '/Users/dnhyxc/Documents/code/blog-admin-web',
-      // 目标服务器项目文件路径
-      remoteFilePath: '/usr/local/nginx/html_admin',
-      // 标识是否是服务端项目
-      isServer: false
-    },
-    // 服务端项目
-    blogServerWeb: {
-      name: 'server',
-      // 本地项目路径
-      localFilePath: '/Users/dnhyxc/Documents/code/blog-server-web',
-      // 目标服务器项目文件路径
-      remoteFilePath: '/usr/local/server',
-      // 标识是否是服务端项目
-      isServer: true
-    }
+  // 前端项目一
+  dnhyxc: {
+    name: 'dnhyxc',
+    // 本地项目路径
+    localFilePath: '/Users/dnhyxc/Documents/code/dnhyxc',
+    // 目标服务器项目文件路径
+    remoteFilePath: '/usr/local/nginx/dnhyxc',
+    // 标识是否是服务端项目
+    isServer: false
+  },
+  // 前端项目二
+  blogClientWeb: {
+    name: 'html',
+    // 本地项目路径
+    localFilePath: '/Users/dnhyxc/Documents/code/blog-client-web',
+    // 目标服务器项目文件路径
+    remoteFilePath: '/usr/local/nginx/html',
+    // 标识是否是服务端项目
+    isServer: false
+  },
+  // 前端项目三
+  blogAdminWeb: {
+    name: 'admin_html',
+    // 本地项目路径
+    localFilePath: '/Users/dnhyxc/Documents/code/blog-admin-web',
+    // 目标服务器项目文件路径
+    remoteFilePath: '/usr/local/nginx/html_admin',
+    // 标识是否是服务端项目
+    isServer: false
+  },
+  // 服务端项目
+  blogServerWeb: {
+    name: 'server',
+    // 本地项目路径
+    localFilePath: '/Users/dnhyxc/Documents/code/blog-server-web',
+    // 目标服务器项目文件路径
+    remoteFilePath: '/usr/local/server',
+    // 标识是否是服务端项目
+    isServer: true
   }
 };
 ```
