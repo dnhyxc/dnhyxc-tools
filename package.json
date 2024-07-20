@@ -6,6 +6,7 @@
     "create": "node ./scripts/create-config.mjs",
     "build": "pnpm -r --filter=./packages/* run build",
     "build:ci": "pnpm -r --filter=./packages/ci run build",
+    "rebuild": "pnpm -r --filter=./packages/ci run build && rm -rf node_modules && pnpm install && npm link",
     "build:cli": "pnpm -r --filter=./packages/cli run build",
     "release": "pnpm changeset publish",
     "publish": "pnpm --filter=./packages/* run build && pnpm changeset && pnpm changeset version && pnpm changeset publish",

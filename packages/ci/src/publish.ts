@@ -12,13 +12,31 @@ import {
   onConnectServer,
   getPublishConfigInfo,
   onRestartServer,
-  onRemoveFile
+  onRemoveFile,
+  verifyFile,
+  verifyFolder
 } from './utils';
-import { Options, PublishConfigParams, PublishCollectParams, ProjectInfo } from './types';
+import { Options, PublishConfigParams, PublishCollectParams } from './types';
 
 let result: Partial<Options> = {};
 
 const ssh = new NodeSSH();
+
+// 校验文件
+const onVerifyFile = (localFilePath: string, isServer: boolean) => {
+  console.log(localFilePath, isServer);
+  if (!isServer && !verifyFolder(`${localFilePath}/dist`)) {
+    console.log(beautyLog.error, chalk.red(`本地 ${localFilePath}/dist 文件不存在，请先将项目进行打包后再发布`));
+    process.exit(1);
+  }
+  if (isServer && (!verifyFolder(`${localFilePath}/src`) || !verifyFile(`${localFilePath}/package.json`))) {
+    console.log(
+      beautyLog.error,
+      chalk.red(`本地 ${localFilePath}/src 或 package.json 或 yarn.lock 文件不存在，无法发布`)
+    );
+    process.exit(1);
+  }
+};
 
 // 压缩 dist
 const onCompressFile = async (localFilePath: string) => {
@@ -175,9 +193,7 @@ const onPublish = async ({
   password,
   localFilePath,
   remoteFilePath,
-  projectName,
-  install,
-  publishConfig
+  install
 }: PublishCollectParams) => {
   try {
     await onConnectServer({
@@ -187,25 +203,24 @@ const onPublish = async ({
       password,
       ssh
     });
-    // 判断是否是服务端项目
-    const isServer = !!getPublishConfigInfo(publishConfig, projectName, 'isServer');
-    if (isServer) {
+    if (install) {
       await onCompressServiceFile(localFilePath);
     } else {
       await onCompressFile(localFilePath);
     }
     await onPutFile(localFilePath, remoteFilePath);
     await onDeleteFile(`${remoteFilePath}/dist`);
-    await onUnzipZip(remoteFilePath, isServer);
+    await onUnzipZip(remoteFilePath, install);
     await onRemoveFile(`${localFilePath}/dist.zip`);
     if (install) {
       await onInstall(remoteFilePath);
     }
-    if (getPublishConfigInfo(publishConfig, projectName, 'isServer')) {
+    if (install) {
       await onRestartServer(remoteFilePath, ssh);
     }
   } catch (err) {
-    console.log(beautyLog.error, chalk.red(`部署失败: ${err}`));
+    console.log(`\n${beautyLog.error}`, chalk.red(`部署失败: ${err}`));
+    process.exit(1);
   } finally {
     // 关闭 SSH 连接
     ssh.dispose();
@@ -223,11 +238,43 @@ export const publish = async (projectName: string, options: Options) => {
     install: _install
   } = options;
 
+  // 标识是否已经校验
+  let isVerified = false;
+
   const publishConfig: PublishConfigParams = getPublishConfig();
 
+  const isService = getPublishConfigInfo(publishConfig, projectName, 'isServer');
+
+  const localPath =
+    _localFilePath ||
+    (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
+    `${process.cwd()}`;
+
+  // 发布配置中 isServer 配置存在时，直接校验
+  if (localPath && isService !== undefined) {
+    onVerifyFile(localPath, !!isService);
+    isVerified = true;
+  }
+
   try {
-    const getInstallStatus = (isServer: boolean) => {
-      return !!(_install || (publishConfig ? !(publishConfig?.[projectName] as ProjectInfo)?.isServer : !isServer));
+    const verifyIsServer = (options: Options) => {
+      /**
+       * 判断是否输入了 isServer 选项，并且 isServer 选项的值为 true 时，则显示安装依赖选项
+       * 判断是否携带 -i 参数，如果未携带，则显示安装依赖选项
+       * 如果 publish.config.json 中配置了 isServer 为 true 时，则显示安装依赖选项
+       */
+      const hideInstall = (options.isServer || isService) && _install === undefined;
+
+      !isVerified &&
+        onVerifyFile(
+          _localFilePath ||
+            options.localFilePath ||
+            (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
+            process.cwd(),
+          options.isServer || !!isService
+        );
+
+      return hideInstall;
     };
 
     result = await prompts(
@@ -275,7 +322,10 @@ export const publish = async (projectName: string, options: Options) => {
         },
         {
           name: 'install',
-          type: (_, values) => (getInstallStatus(values.isServer) ? null : 'toggle'),
+          type: (_, values) => {
+            // isServer 为 true 时，或者 publish.config.json 中没有配置 isServer 为 true 时，或者 _install 没有传入了值时，才显示安装依赖选项
+            return !verifyIsServer(values) ? null : 'toggle';
+          },
           message: '是否安装依赖:',
           initial: false,
           active: 'yes',
@@ -324,8 +374,6 @@ export const publish = async (projectName: string, options: Options) => {
       remoteFilePath ||
       _remoteFilePath ||
       (getPublishConfigInfo(publishConfig, projectName, 'remoteFilePath') as string),
-    install: install || _install,
-    projectName,
-    publishConfig
+    install: install || _install
   });
 };

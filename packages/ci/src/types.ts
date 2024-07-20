@@ -9,10 +9,7 @@ export interface Options {
   isServer: boolean;
 }
 
-export type PublishCollectParams = Omit<Options, 'isServer'> & {
-  projectName: string;
-  publishConfig: PublishConfigParams;
-};
+export type PublishCollectParams = Omit<Options, 'isServer'>;
 
 export interface CollectInfoParams extends Partial<Options> {
   publishConfig: PublishConfigParams;

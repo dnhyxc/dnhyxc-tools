@@ -80,6 +80,16 @@ export const verifyFile = (path: string) => {
   return fs.existsSync(path);
 };
 
+// 校验文件夹是否存在
+export const verifyFolder = (path: string) => {
+  try {
+    const stats = fs.statSync(path);
+    return stats.isDirectory();
+  } catch (err) {
+    return false;
+  }
+};
+
 // 判断是否是合格的文件路径
 export const isValidFilePath = (path: string) => {
   // 使用正则表达式检查路径格式
@@ -136,7 +146,7 @@ export const getPublishConfigInfo = (
   projectName: string,
   field: string,
   message?: boolean
-): string | undefined => {
+): string | boolean | undefined => {
   const value = publishConfig?.[projectName]?.[
     field as keyof (ProjectInfo | ServerInfo | NginxInfo | ServiceInfo)
   ] as string;

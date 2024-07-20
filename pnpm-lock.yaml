@@ -145,7 +145,7 @@ importers:
         specifier: ^12.0.0
         version: 12.0.0
       dnhyxc-ci:
-        specifier: ^0.0.14
+        specifier: ^0.0.15
         version: 'link:'
       figlet:
         specifier: ^1.7.0
