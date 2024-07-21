@@ -16,7 +16,7 @@ import {
   verifyFile,
   verifyFolder
 } from './utils';
-import { Options, PublishConfigParams, PublishCollectParams } from './types';
+import { Options, PublishConfigParams } from './types';
 
 let result: Partial<Options> = {};
 
@@ -24,7 +24,6 @@ const ssh = new NodeSSH();
 
 // 校验文件
 const onVerifyFile = (localFilePath: string, isServer: boolean) => {
-  console.log(localFilePath, isServer);
   if (!isServer && !verifyFolder(`${localFilePath}/dist`)) {
     console.log(beautyLog.error, chalk.red(`本地 ${localFilePath}/dist 文件不存在，请先将项目进行打包后再发布`));
     process.exit(1);
@@ -193,8 +192,9 @@ const onPublish = async ({
   password,
   localFilePath,
   remoteFilePath,
-  install
-}: PublishCollectParams) => {
+  install,
+  isServer
+}: Options) => {
   try {
     await onConnectServer({
       host,
@@ -203,7 +203,7 @@ const onPublish = async ({
       password,
       ssh
     });
-    if (install) {
+    if (isServer) {
       await onCompressServiceFile(localFilePath);
     } else {
       await onCompressFile(localFilePath);
@@ -215,7 +215,7 @@ const onPublish = async ({
     if (install) {
       await onInstall(remoteFilePath);
     }
-    if (install) {
+    if (isServer) {
       await onRestartServer(remoteFilePath, ssh);
     }
   } catch (err) {
@@ -235,7 +235,8 @@ export const publish = async (projectName: string, options: Options) => {
     password: _password,
     localFilePath: _localFilePath,
     remoteFilePath: _remoteFilePath,
-    install: _install
+    install: _install,
+    isServer: _isServer
   } = options;
 
   // 标识是否已经校验
@@ -251,8 +252,8 @@ export const publish = async (projectName: string, options: Options) => {
     `${process.cwd()}`;
 
   // 发布配置中 isServer 配置存在时，直接校验
-  if (localPath && isService !== undefined) {
-    onVerifyFile(localPath, !!isService);
+  if (localPath && (isService !== undefined || _isServer !== undefined)) {
+    onVerifyFile(localPath, _isServer || !!isService);
     isVerified = true;
   }
 
@@ -263,7 +264,7 @@ export const publish = async (projectName: string, options: Options) => {
        * 判断是否携带 -i 参数，如果未携带，则显示安装依赖选项
        * 如果 publish.config.json 中配置了 isServer 为 true 时，则显示安装依赖选项
        */
-      const hideInstall = (options.isServer || isService) && _install === undefined;
+      const hideInstall = (_isServer || options.isServer || isService) && _install === undefined;
 
       !isVerified &&
         onVerifyFile(
@@ -271,7 +272,7 @@ export const publish = async (projectName: string, options: Options) => {
             options.localFilePath ||
             (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
             process.cwd(),
-          options.isServer || !!isService
+          _isServer || options.isServer || !!isService
         );
 
       return hideInstall;
@@ -312,7 +313,7 @@ export const publish = async (projectName: string, options: Options) => {
         {
           name: 'isServer',
           type:
-            _install || getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
+            _isServer || _install || getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
               ? null
               : 'toggle',
           message: '是否是后台服务:',
@@ -358,7 +359,7 @@ export const publish = async (projectName: string, options: Options) => {
     process.exit(1);
   }
 
-  const { host, port, username, password, localFilePath, remoteFilePath, install } = result;
+  const { host, port, username, password, localFilePath, remoteFilePath, install, isServer } = result;
 
   await onPublish({
     host: host || _host || (getPublishConfigInfo(publishConfig, 'serverInfo', 'host') as string),
@@ -374,6 +375,7 @@ export const publish = async (projectName: string, options: Options) => {
       remoteFilePath ||
       _remoteFilePath ||
       (getPublishConfigInfo(publishConfig, projectName, 'remoteFilePath') as string),
-    install: install || _install
+    install: install || _install,
+    isServer: isServer || _isServer || !!isService
   });
 };

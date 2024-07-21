@@ -1,5 +1,11 @@
 # dnhyxc-cli
 
+## 0.0.14
+
+### Patch Changes
+
+- publish 增加 -s 指令
+
 ## 0.0.13
 
 ### Patch Changes

@@ -56,6 +56,7 @@ program
   .option('-m, --password [password]', '输入密码')
   .option('-l, --lcalFilePath [lcalFilePath]', '输入本地文件路径')
   .option('-r, --remoteFilePath [remoteFilePath]', '输入服务器目标文件路径')
+  .option('-s, --isServer', '是否是 node 服务端项目')
   .option('-i, --install', '是否需要安装依赖')
   .action((name, option) => {
     if (option?.lcalFilePath && !isValidFilePath(option?.lcalFilePath)) {
