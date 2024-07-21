@@ -1,5 +1,21 @@
 # dnhyxc-ci
 
+## 0.0.17
+
+### Patch Changes
+
+- 优化
+- Updated dependencies
+  - dnhyxc-ci@0.0.17
+
+## 0.0.16
+
+### Patch Changes
+
+- publish 增加 -s 指令
+- Updated dependencies
+  - dnhyxc-ci@0.0.16
+
 ## 0.0.15
 
 ### Patch Changes
