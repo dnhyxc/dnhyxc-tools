@@ -1,5 +1,11 @@
 # dnhyxc-ci
 
+## 0.0.18
+
+### Patch Changes
+
+- 修改 package.json，去除无用包
+
 ## 0.0.17
 
 ### Patch Changes
