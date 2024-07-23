@@ -205,8 +205,8 @@ export const onCollectServerInfo = async ({
           name: 'nginxRemoteFilePath',
           type:
             nginxRemoteFilePath ||
-            getPublishConfigInfo(publishConfig, 'nginxInfo', 'remoteFilePath', projectName !== 'node') ||
-            projectName === 'node'
+              getPublishConfigInfo(publishConfig, 'nginxInfo', 'remoteFilePath', projectName !== 'node') ||
+              projectName === 'node'
               ? null
               : 'text',
           message: '服务器 nginx.conf 文件路径:',
@@ -223,16 +223,16 @@ export const onCollectServerInfo = async ({
           name: 'nginxRestartPath',
           type:
             nginxRestartPath ||
-            getPublishConfigInfo(
-              publishConfig,
-              'nginxInfo',
-              'restartPath',
-              (command !== 'pull' && projectName === 'nginx') || command === 'push' // 判断是否需要提示
-            ) ||
-            (!nginxRestartPath &&
-              !getPublishConfigInfo(publishConfig, 'nginxInfo', 'restartPath') &&
-              command === 'pull') ||
-            projectName === 'node'
+              getPublishConfigInfo(
+                publishConfig,
+                'nginxInfo',
+                'restartPath',
+                (command !== 'pull' && projectName === 'nginx') || command === 'push' // 判断是否需要提示
+              ) ||
+              (!nginxRestartPath &&
+                !getPublishConfigInfo(publishConfig, 'nginxInfo', 'restartPath') &&
+                command === 'pull') ||
+              projectName === 'node'
               ? null
               : 'text',
           message: '服务器 nginx 重启路径:',
@@ -249,16 +249,16 @@ export const onCollectServerInfo = async ({
           name: 'serviceRestartPath',
           type:
             serviceRestartPath ||
-            getPublishConfigInfo(
-              publishConfig,
-              'serviceInfo',
-              'restartPath',
-              command === 'restart' && projectName === 'node' // 判断是否需要提示
-            ) ||
-            (!serviceRestartPath &&
-              !getPublishConfigInfo(publishConfig, 'serviceInfo', 'restartPath') &&
-              command !== 'restart') ||
-            projectName === 'nginx'
+              getPublishConfigInfo(
+                publishConfig,
+                'serviceInfo',
+                'restartPath',
+                command === 'restart' && projectName === 'node' // 判断是否需要提示
+              ) ||
+              (!serviceRestartPath &&
+                !getPublishConfigInfo(publishConfig, 'serviceInfo', 'restartPath') &&
+                command !== 'restart') ||
+              projectName === 'nginx'
               ? null
               : 'text',
           message: '服务器 node 重启路径:',
@@ -358,6 +358,20 @@ const onCheckNginxConfig = async (remoteFilePath: string, restartPath: string, s
     process.exit(0);
   }
 };
+
+// 校验服务器文件是否存在
+export const checkFileExistence = async (path: string, ssh: NodeSSH) => {
+  try {
+    const res = await ssh.execCommand(`ls ${path}`);
+    if (res.code !== 0 && res.stderr) {
+      console.error(chalk.redBright(`服务器文件 ${chalk.cyan(path)} - ${res.stderr}`));
+      process.exit(1);
+    }
+  } catch (err) {
+    console.error(chalk.redBright(`服务器 ${chalk.cyan(path)} 文件检测失败，${err}`));
+    process.exit(1);
+  }
+}
 
 // 重启 nginx 服务
 export const onRestartNginx = async (remoteFilePath: string, restartPath: string, ssh: NodeSSH) => {

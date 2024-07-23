@@ -7,7 +7,8 @@ import {
   onConnectServer,
   onCollectServerInfo,
   onRestartNginx,
-  onCheckNginxConfigLocal
+  onCheckNginxConfigLocal,
+  checkFileExistence
 } from './utils';
 import { Options, PublishConfigParams, CollectInfoParams } from './types';
 
@@ -15,6 +16,7 @@ const ssh = new NodeSSH();
 
 // 读取本地 nginx 配置并推送到远程服务器
 const onPutNginxConfig = async (localFilePath: string, remoteFilePath: string) => {
+  await checkFileExistence(remoteFilePath, ssh);
   const spinner = ora({
     text: chalk.yellowBright('正在推送 nginx.conf 文件到远程服务器')
   }).start();
