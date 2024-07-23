@@ -30,7 +30,7 @@ const onRestart = async ({
   try {
     await onConnectServer({ host, port, username, password, ssh });
     if (projectName === 'nginx') {
-      await onRestartNginx(nginxRemoteFilePath, nginxRestartPath, ssh);
+      await onRestartNginx(`${nginxRemoteFilePath}/nginx.conf`, nginxRestartPath, ssh);
     } else if (projectName === 'node') {
       await onRestartServer(serviceRestartPath, ssh);
     } else {

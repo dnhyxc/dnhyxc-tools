@@ -39,7 +39,7 @@ const onPullConfig = async ({
 }: Pick<Options, 'host' | 'port' | 'username' | 'password'> & { nginxRemoteFilePath: string }) => {
   try {
     await onConnectServer({ host, port, username, password, ssh });
-    await onReadNginxConfig(nginxRemoteFilePath, `${process.cwd()}/nginx.conf`);
+    await onReadNginxConfig(`${nginxRemoteFilePath}/nginx.conf`, `${process.cwd()}/nginx.conf`);
   } catch (error) {
     console.log(beautyLog.error, chalk.red(`拉取配置文件失败: ${error}`));
   } finally {

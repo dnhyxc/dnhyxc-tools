@@ -19,6 +19,11 @@ const onPutNginxConfig = async (localFilePath: string, remoteFilePath: string) =
     text: chalk.yellowBright('正在推送 nginx.conf 文件到远程服务器')
   }).start();
   try {
+    // 备份远程文件
+    const backupPath = `${remoteFilePath}/nginx_copy.conf`;
+    await ssh.execCommand(`cp ${remoteFilePath} ${backupPath}`);
+    spinner.succeed(chalk.greenBright(`成功备份 ${remoteFilePath} 文件到 ${backupPath}`));
+    // 推送本地文件到远程服务器
     await ssh.putFile(localFilePath, remoteFilePath);
     spinner.succeed(chalk.greenBright(`成功推送 nginx.conf 文件到服务器 ${chalk.cyan(`${remoteFilePath}`)} 目录下`));
   } catch (error) {
@@ -41,8 +46,8 @@ const onPushConfig = async ({
   try {
     await onCheckNginxConfigLocal();
     await onConnectServer({ host, port, username, password, ssh });
-    await onPutNginxConfig(`${process.cwd()}/nginx.conf`, nginxRemoteFilePath);
-    await onRestartNginx(nginxRemoteFilePath, nginxRestartPath, ssh);
+    await onPutNginxConfig(`${process.cwd()}/nginx.conf`, `${nginxRemoteFilePath}/nginx.conf`);
+    await onRestartNginx(`${nginxRemoteFilePath}/nginx.conf`, nginxRestartPath, ssh);
   } catch (error) {
     console.log(beautyLog.error, chalk.red(`拉取配置文件失败: ${error}`));
   } finally {
