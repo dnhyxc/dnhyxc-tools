@@ -117,6 +117,8 @@ dnhyxc-ci publish <projectName> -l  # 携带本地项目路径。
 
 dnhyxc-ci publish <projectName> -r  # 携带远程目标文件路径。
 
+dnhyxc-ci publish <projectName> -s  # 是否是 node 服务端项目。
+
 dnhyxc-ci publish <projectName> -i  # 是否需要安装依赖，只对发布服务代码生效。
 ```
 
@@ -138,6 +140,8 @@ dnhyxc-ci pull -p  # 携带服务器端口号。
 dnhyxc-ci pull -u  # 携带服务器用户名。
 
 dnhyxc-ci pull -m  # 携带服务器密码。
+
+dnhyxc-ci pull -ncp  # 携带远程 nginx 配置文件路径。
 ```
 
 ### 推送 nginx 配置文件到远程服务器
@@ -158,6 +162,10 @@ dnhyxc-ci push -p  # 携带服务器端口号。
 dnhyxc-ci push -u  # 携带服务器用户名。
 
 dnhyxc-ci push -m  # 携带服务器密码。
+
+dnhyxc-ci push -nlp  # 携带本地 nginx 配置文件路径。
+
+dnhyxc-ci push -nrp  # 携带远程 nginx 重启路径。
 ```
 
 ### 重启 nginx 或 node 服务
@@ -178,4 +186,10 @@ dnhyxc-ci restart <serviceName> -p  # 携带服务器端口号。
 dnhyxc-ci restart <serviceName> -u  # 携带服务器用户名。
 
 dnhyxc-ci restart <serviceName> -m  # 携带服务器密码。
+
+dnhyxc-ci restart <serviceName> -ncp  # 携带远程 nginx 配置文件路径。
+
+dnhyxc-ci restart <serviceName> -nrp  # 携带服务器 nginx 重启路径。
+
+dnhyxc-ci restart <serviceName> -srp  # 携带服务器 node 重启路径。
 ```
