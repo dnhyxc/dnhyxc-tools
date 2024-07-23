@@ -210,7 +210,7 @@ const onPublish = async ({
     }
     await onPutFile(localFilePath, remoteFilePath);
     await onDeleteFile(`${remoteFilePath}/dist`);
-    await onUnzipZip(remoteFilePath, install);
+    await onUnzipZip(remoteFilePath, isServer);
     await onRemoveFile(`${localFilePath}/dist.zip`);
     if (install) {
       await onInstall(remoteFilePath);
