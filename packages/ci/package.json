@@ -1,6 +1,6 @@
 {
   "name": "dnhyxc-ci",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "description": "A set of CI/CD tools",
   "main": "dist/ci.cjs",
   "bin": {

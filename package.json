@@ -10,6 +10,7 @@
     "build:cli": "pnpm -r --filter=./packages/cli run build",
     "release": "pnpm changeset publish",
     "publish": "pnpm --filter=./packages/* run build && pnpm changeset && pnpm changeset version && pnpm changeset publish",
+    "publish:ci": "pnpm --filter=./packages/ci run build && pnpm changeset && pnpm changeset version && pnpm changeset publish",
     "prepare": "husky install",
     "test": "npx eslint ./packages --ext ts,vue,js --ignore-pattern packages/cli/src/template",
     "cmt": "git-cz",

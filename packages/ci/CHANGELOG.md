@@ -1,5 +1,11 @@
 # dnhyxc-ci
 
+## 0.0.20
+
+### Patch Changes
+
+- 增加 list 命令
+
 ## 0.0.19
 
 ### Patch Changes
