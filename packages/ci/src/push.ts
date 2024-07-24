@@ -8,26 +8,36 @@ import {
   onCollectServerInfo,
   onRestartNginx,
   onCheckNginxConfigLocal,
-  checkFileExistence
+  checkFileExistence,
+  onRemoveServerFile
 } from './utils';
 import { Options, PublishConfigParams, CollectInfoParams } from './types';
 
 const ssh = new NodeSSH();
 
-// 读取本地 nginx 配置并推送到远程服务器
-const onPutNginxConfig = async (localFilePath: string, remoteFilePath: string) => {
-  await checkFileExistence(remoteFilePath, ssh);
+// 备份远程 nginx 配置
+const onBackupNginxConfig = async (remoteFilePath: string, backupPath = `${remoteFilePath}/nginx_copy.conf`) => {
   const spinner = ora({
-    text: chalk.yellowBright('正在推送 nginx.conf 文件到远程服务器')
+    text: chalk.yellowBright('正在备份远程 nginx.conf 文件...')
   }).start();
   try {
     // 备份远程文件
-    const backupPath = `${remoteFilePath}/nginx_copy.conf`;
-    await ssh.execCommand(`cp ${remoteFilePath} ${backupPath}`);
-    spinner.succeed(chalk.greenBright(`成功备份 ${remoteFilePath} 文件到 ${backupPath}`));
+    await ssh.execCommand(`cp ${remoteFilePath}/nginx.conf ${backupPath}`);
+    spinner.succeed(chalk.greenBright(`成功备份 ${remoteFilePath}/nginx.conf 文件到 ${backupPath}`));
+  } catch (error) {
+    spinner.fail(chalk.redBright(`备份 ${remoteFilePath}/nginx.conf 文件到 ${backupPath} 失败: ${error}`));
+  }
+};
+
+// 读取本地 nginx 配置并推送到远程服务器
+const onPutNginxConfig = async (localFilePath: string, remoteFilePath: string) => {
+  const spinner = ora({
+    text: chalk.yellowBright('正在推送 nginx.conf 文件到远程服务器...')
+  }).start();
+  try {
     // 推送本地文件到远程服务器
     await ssh.putFile(localFilePath, remoteFilePath);
-    spinner.succeed(chalk.greenBright(`成功推送 nginx.conf 文件到服务器 ${chalk.cyan(`${remoteFilePath}`)} 目录下`));
+    spinner.succeed(chalk.greenBright(`服务器 ${chalk.cyan(`${remoteFilePath}`)} 内容更新成功`));
   } catch (error) {
     spinner.fail(chalk.redBright(`推送 nginx.conf 文件到服务器失败: ${error}`));
     process.exit(0);
@@ -48,8 +58,11 @@ const onPushConfig = async ({
   try {
     await onCheckNginxConfigLocal();
     await onConnectServer({ host, port, username, password, ssh });
+    await checkFileExistence(`${nginxRemoteFilePath}/nginx.conf`, ssh);
+    await onBackupNginxConfig(`${nginxRemoteFilePath}`);
     await onPutNginxConfig(`${process.cwd()}/nginx.conf`, `${nginxRemoteFilePath}/nginx.conf`);
     await onRestartNginx(`${nginxRemoteFilePath}/nginx.conf`, nginxRestartPath, ssh);
+    await onRemoveServerFile(`${nginxRemoteFilePath}/nginx_copy.conf`, ssh);
   } catch (error) {
     console.log(beautyLog.error, chalk.red(`拉取配置文件失败: ${error}`));
   } finally {

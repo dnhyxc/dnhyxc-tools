@@ -10,7 +10,7 @@ const ssh = new NodeSSH();
 // 读取 ngnix 配置
 const onReadNginxConfig = async (remotePath: string, localFileName: string) => {
   const spinner = ora({
-    text: chalk.yellowBright(`正在读取远程文件: ${chalk.cyan(`${remotePath}`)}`)
+    text: chalk.yellowBright(`正在读取远程 ${chalk.cyan(`${remotePath}`)} 文件...`)
   }).start();
   try {
     const result = await ssh.execCommand(`cat ${remotePath}`);

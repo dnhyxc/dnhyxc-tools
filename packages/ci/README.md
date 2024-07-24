@@ -31,7 +31,7 @@ module.exports = {
   },
   // nginx配置
   nginxInfo: {
-    remoteFilePath: '/usr/local/nginx/conf/nginx.conf',
+    remoteFilePath: '/usr/local/nginx/conf',
     restartPath: '/usr/local/nginx/sbin'
   },
   // node服务配置

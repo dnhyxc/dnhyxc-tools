@@ -104,12 +104,6 @@ export const getPublishConfig = () => {
     const config = require(`${process.cwd()}/publish.config.js`);
     return config;
   } catch (error) {
-    console.log(
-      beautyLog.warning,
-      chalk.yellowBright(
-        `当前项目 ${process.cwd()}/publish.config.js 目录下未配置 publish.config.js 文件，需要手动输入配置信息`
-      )
-    );
     return null;
   }
 };
@@ -158,7 +152,7 @@ export const getPublishConfigInfo = (
     message &&
       console.log(
         '\n' + beautyLog.warning,
-        chalk.yellowBright(`未找到项目 ${chalk.cyan(projectName)}.${chalk.cyan(field)} 的配置信息，请手动输入!\n`)
+        chalk.yellowBright(`未获取到项目 ${chalk.cyan(projectName)}.${chalk.cyan(field)} 的配置信息，请手动输入!\n`)
       );
     return undefined;
   }
@@ -205,8 +199,8 @@ export const onCollectServerInfo = async ({
           name: 'nginxRemoteFilePath',
           type:
             nginxRemoteFilePath ||
-              getPublishConfigInfo(publishConfig, 'nginxInfo', 'remoteFilePath', projectName !== 'node') ||
-              projectName === 'node'
+            getPublishConfigInfo(publishConfig, 'nginxInfo', 'remoteFilePath', projectName !== 'node') ||
+            projectName === 'node'
               ? null
               : 'text',
           message: '服务器 nginx.conf 文件路径:',
@@ -223,16 +217,16 @@ export const onCollectServerInfo = async ({
           name: 'nginxRestartPath',
           type:
             nginxRestartPath ||
-              getPublishConfigInfo(
-                publishConfig,
-                'nginxInfo',
-                'restartPath',
-                (command !== 'pull' && projectName === 'nginx') || command === 'push' // 判断是否需要提示
-              ) ||
-              (!nginxRestartPath &&
-                !getPublishConfigInfo(publishConfig, 'nginxInfo', 'restartPath') &&
-                command === 'pull') ||
-              projectName === 'node'
+            getPublishConfigInfo(
+              publishConfig,
+              'nginxInfo',
+              'restartPath',
+              (command !== 'pull' && projectName === 'nginx') || command === 'push' // 判断是否需要提示
+            ) ||
+            (!nginxRestartPath &&
+              !getPublishConfigInfo(publishConfig, 'nginxInfo', 'restartPath') &&
+              command === 'pull') ||
+            projectName === 'node'
               ? null
               : 'text',
           message: '服务器 nginx 重启路径:',
@@ -249,16 +243,16 @@ export const onCollectServerInfo = async ({
           name: 'serviceRestartPath',
           type:
             serviceRestartPath ||
-              getPublishConfigInfo(
-                publishConfig,
-                'serviceInfo',
-                'restartPath',
-                command === 'restart' && projectName === 'node' // 判断是否需要提示
-              ) ||
-              (!serviceRestartPath &&
-                !getPublishConfigInfo(publishConfig, 'serviceInfo', 'restartPath') &&
-                command !== 'restart') ||
-              projectName === 'nginx'
+            getPublishConfigInfo(
+              publishConfig,
+              'serviceInfo',
+              'restartPath',
+              command === 'restart' && projectName === 'node' // 判断是否需要提示
+            ) ||
+            (!serviceRestartPath &&
+              !getPublishConfigInfo(publishConfig, 'serviceInfo', 'restartPath') &&
+              command !== 'restart') ||
+            projectName === 'nginx'
               ? null
               : 'text',
           message: '服务器 node 重启路径:',
@@ -289,7 +283,7 @@ export const onCollectServerInfo = async ({
 // 删除本地文件
 export const onRemoveFile = async (localFile: string) => {
   const spinner = ora({
-    text: chalk.yellowBright(`正在删除本地文件: ${chalk.cyan(localFile)}`)
+    text: chalk.yellowBright(`正在删除本地文件: ${chalk.cyan(localFile)} ...`)
   }).start();
   return new Promise((resolve, reject) => {
     try {
@@ -310,31 +304,47 @@ export const onRemoveFile = async (localFile: string) => {
   });
 };
 
+// 删除服务器文件
+export const onRemoveServerFile = async (localFile: string, ssh: NodeSSH) => {
+  const spinner = ora({
+    text: chalk.yellowBright(`正在删除服务器文件: ${chalk.cyan(localFile)} ...`)
+  }).start();
+  try {
+    await ssh.execCommand(`rm -rf ${localFile}`);
+    spinner.succeed(chalk.greenBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 成功`));
+  } catch (err) {
+    spinner.fail(chalk.redBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 失败，${err}`));
+    process.exit(1);
+  }
+};
+
 // 校验本地 nginx 配置文件是否有效
 export const onCheckNginxConfigLocal = () => {
-  const spinner = ora({
-    text: chalk.yellowBright(`正在检查本地 ${process.cwd()}/nginx.conf 文件是否有效`)
-  }).start();
   return new Promise((resolve) => {
     try {
-      NginxConfFile.create(`${process.cwd()}/nginx.conf`, function (err, conf) {
+      NginxConfFile.create(`${process.cwd()}/nginx.conf`, (err, conf) => {
         if (err) {
-          spinner.fail(chalk.redBright(`读取文件: ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 出错，${err}`));
+          console.log(
+            beautyLog.error,
+            chalk.redBright(`读取文件: ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 出错，${err}`)
+          );
           return;
         }
         const server = conf?.nginx?.http?.[0].server;
-        if (server?.length) {
-          spinner.succeed(
-            chalk.greenBright(`已将 nginx 相关配置存入本地 ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 文件中`)
+        if (!server?.length) {
+          console.log(
+            beautyLog.error,
+            chalk.redBright(`本地 ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 文件中配置存在问题`)
           );
-        } else {
-          spinner.fail(chalk.redBright(`本地 ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 文件中配置存在问题`));
           process.exit(1);
         }
       });
       resolve(1);
     } catch (error) {
-      console.error(`nginx 配置文件语法错误: ${error.message}`);
+      console.log(
+        beautyLog.error,
+        chalk.redBright(`本地 ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 文件中配置存在问题`)
+      );
       process.exit(1);
     }
   });
@@ -343,7 +353,7 @@ export const onCheckNginxConfigLocal = () => {
 // 校验 nginx 文件是否有效
 const onCheckNginxConfig = async (remoteFilePath: string, restartPath: string, ssh: NodeSSH) => {
   const spinner = ora({
-    text: chalk.yellowBright(`正在检查服务器 ${remoteFilePath} 文件是否有效`)
+    text: chalk.yellowBright(`正在检查服务器 ${remoteFilePath} 文件是否有效...`)
   }).start();
   try {
     const { code, stderr } = await ssh.execCommand(`cd ${restartPath} && ./nginx -t -c ${remoteFilePath}`);
@@ -371,13 +381,13 @@ export const checkFileExistence = async (path: string, ssh: NodeSSH) => {
     console.error(chalk.redBright(`服务器 ${chalk.cyan(path)} 文件检测失败，${err}`));
     process.exit(1);
   }
-}
+};
 
 // 重启 nginx 服务
 export const onRestartNginx = async (remoteFilePath: string, restartPath: string, ssh: NodeSSH) => {
   await onCheckNginxConfig(remoteFilePath, restartPath, ssh);
   const spinner = ora({
-    text: chalk.yellowBright('正在重启 nginx 服务')
+    text: chalk.yellowBright('正在重启 nginx 服务...')
   }).start();
   try {
     await ssh.execCommand(`cd ${restartPath} && ./nginx -s reload`);

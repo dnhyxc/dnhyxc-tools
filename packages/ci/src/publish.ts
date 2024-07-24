@@ -13,6 +13,7 @@ import {
   getPublishConfigInfo,
   onRestartServer,
   onRemoveFile,
+  onRemoveServerFile,
   verifyFile,
   verifyFolder
 } from './utils';
@@ -41,7 +42,7 @@ const onVerifyFile = (localFilePath: string, isServer: boolean) => {
 const onCompressFile = async (localFilePath: string) => {
   return new Promise((resolve, reject) => {
     const spinner = ora({
-      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)}`)
+      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)} ...`)
     }).start();
     const archive = archiver('zip', {
       zlib: { level: 9 }
@@ -70,7 +71,7 @@ const onCompressFile = async (localFilePath: string) => {
 const onCompressServiceFile = async (localFilePath: string) => {
   return new Promise((resolve, reject) => {
     const spinner = ora({
-      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)}`)
+      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)} ...`)
     }).start();
     const srcPath = `${localFilePath}/src`;
     const uploadPath = `${srcPath}/upload`;
@@ -130,29 +131,15 @@ const onPutFile = async (localFilePath: string, remoteFilePath: string) => {
   }
 };
 
-// 删除文件
-const onDeleteFile = async (localFile: string) => {
-  const spinner = ora({
-    text: chalk.yellowBright(`正在删除服务器文件: ${chalk.cyan(localFile)}`)
-  }).start();
-  try {
-    await ssh.execCommand(`rm -rf ${localFile}`);
-    spinner.succeed(chalk.greenBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 成功`));
-  } catch (err) {
-    spinner.fail(chalk.redBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 失败，${err}`));
-    process.exit(1);
-  }
-};
-
 // 解压文件
 const onUnzipZip = async (remotePath: string, isServer: boolean) => {
   const spinner = ora({
-    text: chalk.yellowBright(`正在解压服务器文件: ${chalk.cyan(`${remotePath}/dist.zip`)}`)
+    text: chalk.yellowBright(`正在解压服务器文件: ${chalk.cyan(`${remotePath}/dist.zip`)} ...`)
   }).start();
   try {
     await ssh.execCommand(`unzip -o ${`${remotePath}/dist.zip`} -d ${remotePath}`);
     spinner.succeed(chalk.greenBright(`解压服务器文件: ${chalk.cyan(`${remotePath}/dist.zip`)} 成功`));
-    await onDeleteFile(`${remotePath}/dist.zip`);
+    await onRemoveServerFile(`${remotePath}/dist.zip`, ssh);
     !isServer &&
       console.log(
         `\n${beautyLog.success}`,
@@ -209,10 +196,10 @@ const onPublish = async ({
       await onCompressFile(localFilePath);
     }
     await onPutFile(localFilePath, remoteFilePath);
-    await onDeleteFile(`${remoteFilePath}/dist`);
+    await onRemoveServerFile(`${remoteFilePath}/dist`, ssh);
     await onUnzipZip(remoteFilePath, isServer);
     await onRemoveFile(`${localFilePath}/dist.zip`);
-    if (install) {
+    if (install && isServer) {
       await onInstall(remoteFilePath);
     }
     if (isServer) {
@@ -227,7 +214,7 @@ const onPublish = async ({
   }
 };
 
-export const publish = async (projectName: string, options: Options) => {
+export const publish = async (projectName: string, options: Omit<Options, 'isServer'> & { isServer: string }) => {
   const {
     host: _host,
     port: _port,
@@ -253,7 +240,7 @@ export const publish = async (projectName: string, options: Options) => {
 
   // 发布配置中 isServer 配置存在时，直接校验
   if (localPath && (isService !== undefined || _isServer !== undefined)) {
-    onVerifyFile(localPath, _isServer || !!isService);
+    onVerifyFile(localPath, _isServer === 'true' || !!isService);
     isVerified = true;
   }
 
@@ -264,7 +251,7 @@ export const publish = async (projectName: string, options: Options) => {
        * 判断是否携带 -i 参数，如果未携带，则显示安装依赖选项
        * 如果 publish.config.json 中配置了 isServer 为 true 时，则显示安装依赖选项
        */
-      const hideInstall = (_isServer || options.isServer || isService) && _install === undefined;
+      const needInstall = (_isServer === 'true' || options.isServer || isService) && _install === undefined;
 
       !isVerified &&
         onVerifyFile(
@@ -272,10 +259,10 @@ export const publish = async (projectName: string, options: Options) => {
             options.localFilePath ||
             (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
             process.cwd(),
-          _isServer || options.isServer || !!isService
+          _isServer === 'true' || options.isServer || !!isService
         );
 
-      return hideInstall;
+      return needInstall;
     };
 
     result = await prompts(
@@ -313,7 +300,9 @@ export const publish = async (projectName: string, options: Options) => {
         {
           name: 'isServer',
           type:
-            _isServer || _install || getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
+            _isServer !== undefined ||
+            _install ||
+            getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
               ? null
               : 'toggle',
           message: '是否是后台服务:',
@@ -376,6 +365,6 @@ export const publish = async (projectName: string, options: Options) => {
       _remoteFilePath ||
       (getPublishConfigInfo(publishConfig, projectName, 'remoteFilePath') as string),
     install: install || _install,
-    isServer: isServer || _isServer || !!isService
+    isServer: _isServer ? _isServer === 'true' : isServer || !!isService
   });
 };

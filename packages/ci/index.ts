@@ -20,7 +20,7 @@ program
     console.log(`\r\nRun ${chalk.cyan('dnhyxc-ci <command> --help')} for detailed usage of given command\r\n`);
   });
 
-const publishCallback = async (name: string, options: Options) => {
+const publishCallback = async (name: string, options: Omit<Options, 'isServer'> & { isServer: string }) => {
   await publish(name, options);
 };
 
@@ -54,9 +54,9 @@ program
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
   .option('-m, --password [password]', '输入密码')
-  .option('-l, --lcalFilePath [lcalFilePath]', '输入本地文件路径')
-  .option('-r, --remoteFilePath [remoteFilePath]', '输入服务器目标文件路径')
-  .option('-s, --isServer', '是否是 node 服务端项目')
+  .option('-l, --lcalFilePath [lcalFilePath]', '输入本地文件路径，必须以 / 开头')
+  .option('-r, --remoteFilePath [remoteFilePath]', '输入服务器目标文件路径，必须以 / 开头')
+  .option('-s, --isServer [isServer]', '是否是 node 服务端项目，只允许输入 true 或 false')
   .option('-i, --install', '是否需要安装依赖')
   .action((name, option) => {
     if (option?.lcalFilePath && !isValidFilePath(option?.lcalFilePath)) {
@@ -65,6 +65,10 @@ program
     }
     if (option?.remoteFilePath && !isValidFilePath(option?.remoteFilePath)) {
       console.log(`\n${chalk.redBright('Error: 服务器目标文件路径必须以 / 开头')}\n`);
+      process.exit(1);
+    }
+    if (option?.isServer && !['true', 'false'].includes(option.isServer)) {
+      console.log(`\n${chalk.redBright('Error: -s 只能携带 true 或 false，如 -s true')}\n`);
       process.exit(1);
     }
     publishCallback(name, option);
@@ -77,7 +81,7 @@ program
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
   .option('-m, --password [password]', '输入密码')
-  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径')
+  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径，必须以 / 开头')
   .action((configName, option) => {
     if (option?.nginxRemoteFilePath && !isValidFilePath(option?.nginxRemoteFilePath)) {
       console.log(`\n${chalk.redBright('Error: nginx.conf 文件路径必须以 / 开头')}\n`);
@@ -93,8 +97,8 @@ program
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
   .option('-m, --password [password]', '输入密码')
-  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径')
-  .option('-nrp, --nginxRestartPath [nginxRestartPath]', '输入服务器 nginx 重启路径')
+  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径，必须以 / 开头')
+  .option('-nrp, --nginxRestartPath [nginxRestartPath]', '输入服务器 nginx 重启路径，必须以 / 开头')
   .action((configName, option) => {
     if (option?.nginxRemoteFilePath && !isValidFilePath(option?.nginxRemoteFilePath)) {
       console.log(`\n${chalk.redBright('Error: nginx.conf 文件路径必须以 / 开头')}\n`);
@@ -114,9 +118,9 @@ program
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
   .option('-m, --password [password]', '输入密码')
-  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径')
-  .option('-nrp, --nginxRestartPath [nginxRestartPath]', '输入服务器 nginx 重启路径')
-  .option('-srp, --serviceRestartPath [serviceRestartPath]', '输入服务器 node 重启路径')
+  .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径，必须以 / 开头')
+  .option('-nrp, --nginxRestartPath [nginxRestartPath]', '输入服务器 nginx 重启路径，必须以 / 开头')
+  .option('-srp, --serviceRestartPath [serviceRestartPath]', '输入服务器 node 重启路径，必须以 / 开头')
   .action((serviceName, option) => {
     const validatedServiceName = validateServiceName(serviceName);
     if (option?.nginxRemoteFilePath && !isValidFilePath(option?.nginxRemoteFilePath)) {
