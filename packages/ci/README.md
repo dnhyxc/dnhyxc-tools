@@ -102,7 +102,7 @@ dnhyxc --help
 dnhyxc-ci publish projectName
 ```
 
-#### 发布项目相关命令说明
+#### dnhyxc-ci publish 相关命令说明
 
 ```yaml
 dnhyxc-ci publish <projectName> -h  # 携带服务器 host。
@@ -130,7 +130,7 @@ dnhyxc-ci publish <projectName> -i  # 是否需要安装依赖，只对发布服
 dnhyxc-ci pull
 ```
 
-#### 拉取远程 nginx 配置文件相关命令说明
+#### dnhyxc-ci pull 相关命令说明
 
 ```yaml
 dnhyxc-ci pull -h  # 携带服务器 host。
@@ -152,7 +152,7 @@ dnhyxc-ci pull -ncp  # 携带远程 nginx 配置文件路径。
 dnhyxc-ci push
 ```
 
-#### 推送 nginx 配置文件到远程服务器相关命令说明
+#### dnhyxc-ci push 相关命令说明
 
 ```yaml
 dnhyxc-ci push -h  # 携带服务器 host。
@@ -176,7 +176,7 @@ dnhyxc-ci push -nrp  # 携带远程 nginx 重启路径。
 dnhyxc-ci restart serviceName
 ```
 
-#### 重启 nginx 或 node 服务相关命令说明
+#### dnhyxc-ci restart 相关命令说明
 
 ```yaml
 dnhyxc-ci restart <serviceName> -h  # 携带服务器 host。
@@ -192,4 +192,24 @@ dnhyxc-ci restart <serviceName> -ncp  # 携带远程 nginx 配置文件路径。
 dnhyxc-ci restart <serviceName> -nrp  # 携带服务器 nginx 重启路径。
 
 dnhyxc-ci restart <serviceName> -srp  # 携带服务器 node 重启路径。
+```
+
+### 查看 node 服务相关进程的状态和日志信息
+
+通过 `dnhyxc-ci list` 命令查看 node 服务相关进程的状态和日志信息。
+
+```yaml
+dnhyxc-ci list
+```
+
+#### dnhyxc-ci list 相关命令说明
+
+```yaml
+dnhyxc-ci restart <serviceName> -h  # 携带服务器 host。
+
+dnhyxc-ci restart <serviceName> -p  # 携带服务器端口号。
+
+dnhyxc-ci restart <serviceName> -u  # 携带服务器用户名。
+
+dnhyxc-ci restart <serviceName> -m  # 携带服务器密码。
 ```

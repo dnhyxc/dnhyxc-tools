@@ -7,6 +7,7 @@ import { publish } from '@ci/publish';
 import { pull } from '@ci/pull';
 import { push } from '@ci/push';
 import { restart } from '@ci/restart';
+import { list } from '@ci/list';
 import { CollectInfoParams, Options } from '@ci/types';
 import pkg from './package.json';
 
@@ -45,6 +46,10 @@ const validateServiceName = (serviceName: string) => {
     process.exit(1);
   }
   return serviceName;
+};
+
+const listCallback = async (name: string, option: Pick<Options, 'host' | 'port' | 'username' | 'password'>) => {
+  await list(option);
 };
 
 program
@@ -137,6 +142,15 @@ program
     }
     restartCallback(validatedServiceName, option);
   });
+
+program
+  .command('list [name]')
+  .description('查看 node 服务相关进程的状态和日志信息')
+  .option('-h, --host [host]', '输入host')
+  .option('-p, --port [port]', '输入端口号')
+  .option('-u, --username [username]', '输入用户名')
+  .option('-m, --password [password]', '输入密码')
+  .action(listCallback);
 
 // 必须写在所有的 program 语句之后，否则上述 program 语句不会执行
 program.parse(process.argv);
