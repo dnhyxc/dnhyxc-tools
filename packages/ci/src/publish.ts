@@ -30,10 +30,7 @@ const onVerifyFile = (localFilePath: string, isServer: boolean) => {
     process.exit(1);
   }
   if (isServer && (!verifyFolder(`${localFilePath}/src`) || !verifyFile(`${localFilePath}/package.json`))) {
-    console.log(
-      beautyLog.error,
-      chalk.red(`本地 ${localFilePath}/src 或 package.json 或 yarn.lock 文件不存在，无法发布`)
-    );
+    console.log(beautyLog.error, chalk.red(`本地 ${localFilePath}/src 或 package.json 等文件不存在，无法发布`));
     process.exit(1);
   }
 };
