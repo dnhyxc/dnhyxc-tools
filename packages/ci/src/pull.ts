@@ -2,13 +2,15 @@ import fs from 'fs-extra';
 import { NodeSSH } from 'node-ssh';
 import chalk from 'chalk';
 import ora from 'ora';
-import { beautyLog, getPublishConfig, onConnectServer, onCollectServerInfo } from './utils';
+import { beautyLog, getPublishConfig, onConnectServer, onCollectServerInfo, ompatiblePath } from './utils';
 import { Options, PublishConfigParams, CollectInfoParams } from './types';
 
 const ssh = new NodeSSH();
 
 // 读取 ngnix 配置
 const onReadNginxConfig = async (remotePath: string, localFileName: string) => {
+  remotePath = ompatiblePath(remotePath);
+  localFileName = ompatiblePath(localFileName);
   const spinner = ora({
     text: chalk.yellowBright(`正在读取远程 ${chalk.cyan(`${remotePath}`)} 文件...`)
   }).start();

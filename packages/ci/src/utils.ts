@@ -75,15 +75,20 @@ export const updateVersion = (version: string) => {
   return `${major}.${minor}.${patch}`;
 };
 
+// 兼容路径
+export const ompatiblePath = (url: string, url2 = '') => {
+  return url2 ? path.join(url, url2) : path.resolve(url);
+};
+
 // 校验文件是否存在
 export const verifyFile = (url: string) => {
-  return fs.existsSync(path.resolve(url));
+  return fs.existsSync(ompatiblePath(url));
 };
 
 // 校验文件夹是否存在
 export const verifyFolder = (url: string) => {
   try {
-    const stats = fs.statSync(path.resolve(url));
+    const stats = fs.statSync(ompatiblePath(url));
     return stats.isDirectory();
   } catch (err) {
     return false;
@@ -101,8 +106,7 @@ export const isValidFilePath = (path: string) => {
 export const getPublishConfig = () => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const config = require(`${path.resolve(process.cwd(), 'publish.config.js')}`);
-    console.log(config, 'config')
+    const config = require(`${ompatiblePath(process.cwd(), 'publish.config.js')}`);
     return config;
   } catch (error) {
     return null;
@@ -283,23 +287,21 @@ export const onCollectServerInfo = async ({
 
 // 删除本地文件
 export const onRemoveFile = async (localFile: string) => {
+  const fullPath = ompatiblePath(localFile);
   const spinner = ora({
-    text: chalk.yellowBright(`正在删除本地文件: ${chalk.cyan(localFile)} ...`)
+    text: chalk.yellowBright(`正在删除本地文件: ${chalk.cyan(fullPath)} ...`)
   }).start();
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     try {
-      const fullPath = path.resolve(localFile);
       // 删除文件
       fs.unlink(fullPath, (err) => {
         if (err === null) {
-          spinner.succeed(chalk.greenBright(`删除本地文件: ${chalk.cyan(localFile)} 成功`));
+          spinner.succeed(chalk.greenBright(`删除本地文件: ${chalk.cyan(fullPath)} 成功`));
           resolve(1);
         }
       });
     } catch (err) {
-      console.error(chalk.red(`Failed to delete file ${localFile}: ${err}`));
-      spinner.fail(chalk.redBright(`删除本地文件: ${chalk.cyan(localFile)} 失败`));
-      reject(err);
+      spinner.fail(chalk.redBright(`删除本地文件: ${chalk.cyan(fullPath)} 失败，${err}`));
       process.exit(1);
     }
   });
@@ -307,14 +309,15 @@ export const onRemoveFile = async (localFile: string) => {
 
 // 删除服务器文件
 export const onRemoveServerFile = async (localFile: string, ssh: NodeSSH) => {
+  const fullPath = ompatiblePath(localFile);
   const spinner = ora({
-    text: chalk.yellowBright(`正在删除服务器文件: ${chalk.cyan(localFile)} ...`)
+    text: chalk.yellowBright(`正在删除服务器文件: ${chalk.cyan(fullPath)} ...`)
   }).start();
   try {
-    await ssh.execCommand(`rm -rf ${localFile}`);
-    spinner.succeed(chalk.greenBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 成功`));
+    await ssh.execCommand(`rm -rf ${fullPath}`);
+    spinner.succeed(chalk.greenBright(`删除服务器文件: ${chalk.cyan(`${fullPath}`)} 成功`));
   } catch (err) {
-    spinner.fail(chalk.redBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 失败，${err}`));
+    spinner.fail(chalk.redBright(`删除服务器文件: ${chalk.cyan(`${fullPath}`)} 失败，${err}`));
     process.exit(1);
   }
 };
@@ -322,21 +325,16 @@ export const onRemoveServerFile = async (localFile: string, ssh: NodeSSH) => {
 // 校验本地 nginx 配置文件是否有效
 export const onCheckNginxConfigLocal = () => {
   return new Promise((resolve) => {
+    const nginxConfPath = ompatiblePath(process.cwd(), 'nginx.conf');
     try {
-      NginxConfFile.create(`${process.cwd()}/nginx.conf`, (err, conf) => {
+      NginxConfFile.create(nginxConfPath, (err, conf) => {
         if (err) {
-          console.log(
-            beautyLog.error,
-            chalk.redBright(`读取文件: ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 出错，${err}`)
-          );
+          console.log(beautyLog.error, chalk.redBright(`读取文件: ${chalk.cyan(nginxConfPath)} 出错，${err}`));
           return;
         }
         const server = conf?.nginx?.http?.[0].server;
         if (!server?.length) {
-          console.log(
-            beautyLog.error,
-            chalk.redBright(`本地 ${chalk.cyan(`${process.cwd()}/nginx.conf`)} 文件中配置存在问题`)
-          );
+          console.log(beautyLog.error, chalk.redBright(`本地 ${chalk.cyan(nginxConfPath)} 文件中配置存在问题`));
           process.exit(1);
         }
       });
@@ -353,11 +351,15 @@ export const onCheckNginxConfigLocal = () => {
 
 // 校验 nginx 文件是否有效
 const onCheckNginxConfig = async (remoteFilePath: string, restartPath: string, ssh: NodeSSH) => {
+  restartPath = ompatiblePath(restartPath);
+  remoteFilePath = ompatiblePath(remoteFilePath);
   const spinner = ora({
     text: chalk.yellowBright(`正在检查服务器 ${remoteFilePath} 文件是否有效...`)
   }).start();
   try {
-    const { code, stderr } = await ssh.execCommand(`cd ${restartPath} && ./nginx -t -c ${remoteFilePath}`);
+    const { code, stderr } = await ssh.execCommand(
+      `cd ${ompatiblePath(restartPath)} && ./nginx -t -c ${remoteFilePath}`
+    );
     if (code === 0 && stderr.includes('test is successful')) {
       spinner.succeed(chalk.greenBright(`服务器 ${chalk.cyan(remoteFilePath)} 文件配置无误`));
     } else {
@@ -373,7 +375,7 @@ const onCheckNginxConfig = async (remoteFilePath: string, restartPath: string, s
 // 校验服务器文件是否存在
 export const checkFileExistence = async (url: string, ssh: NodeSSH) => {
   try {
-    const res = await ssh.execCommand(`ls ${path.resolve(url)}`);
+    const res = await ssh.execCommand(`ls ${ompatiblePath(url)}`);
     if (res.code !== 0 && res.stderr) {
       console.error(chalk.redBright(`服务器文件 ${chalk.cyan(path)} - ${res.stderr}`));
       process.exit(1);
@@ -391,14 +393,14 @@ export const onRestartNginx = async (remoteFilePath: string, restartPath: string
     text: chalk.yellowBright('正在重启 nginx 服务...')
   }).start();
   try {
-    await ssh.execCommand(`cd ${restartPath} && ./nginx -s reload`);
-    spinner.succeed(chalk.greenBright(`nginx 服务已重启: ${restartPath}`));
+    await ssh.execCommand(`cd ${ompatiblePath(restartPath)} && ./nginx -s reload`);
+    spinner.succeed(chalk.greenBright(`nginx 服务已重启: ${ompatiblePath(restartPath)}`));
     if (verifyFile(`${process.cwd()}/nginx.conf`)) {
       await onRemoveFile(`${process.cwd()}/nginx.conf`);
     }
     console.log(
       `\n${beautyLog.success}`,
-      chalk.greenBright(`${chalk.bold(`🎉 🎉 🎉 nginx 服务重启成功 ${restartPath} 🎉 🎉 🎉`)}\n`)
+      chalk.greenBright(`${chalk.bold(`🎉 🎉 🎉 nginx 服务重启成功 ${ompatiblePath(restartPath)} 🎉 🎉 🎉`)}\n`)
     );
   } catch (error) {
     spinner.fail(chalk.redBright(`重启 nginx 服务失败: ${error}`));
@@ -408,6 +410,7 @@ export const onRestartNginx = async (remoteFilePath: string, restartPath: string
 
 // 重启后台项目
 export const onRestartServer = async (remotePath: string, ssh: NodeSSH) => {
+  remotePath = ompatiblePath(remotePath);
   const spinner = ora({
     text: chalk.yellowBright(chalk.cyan('正在重启服务...'))
   }).start();

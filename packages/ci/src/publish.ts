@@ -15,7 +15,8 @@ import {
   onRemoveFile,
   onRemoveServerFile,
   verifyFile,
-  verifyFolder
+  verifyFolder,
+  ompatiblePath
 } from './utils';
 import { Options, PublishConfigParams } from './types';
 
@@ -26,11 +27,17 @@ const ssh = new NodeSSH();
 // 校验文件
 const onVerifyFile = (localFilePath: string, isServer: boolean) => {
   if (!isServer && !verifyFolder(`${localFilePath}/dist`)) {
-    console.log(beautyLog.error, chalk.red(`本地 ${localFilePath}/dist 文件不存在，请先将项目进行打包后再发布`));
+    console.log(
+      beautyLog.error,
+      chalk.red(`本地 ${ompatiblePath(localFilePath, 'dist')} 文件不存在，请先将项目进行打包后再发布`)
+    );
     process.exit(1);
   }
   if (isServer && (!verifyFolder(`${localFilePath}/src`) || !verifyFile(`${localFilePath}/package.json`))) {
-    console.log(beautyLog.error, chalk.red(`本地 ${localFilePath}/src 或 package.json 等文件不存在，无法发布`));
+    console.log(
+      beautyLog.error,
+      chalk.red(`本地 ${ompatiblePath(localFilePath, 'src')} 或 package.json 等文件不存在，无法发布`)
+    );
     process.exit(1);
   }
 };
@@ -39,27 +46,27 @@ const onVerifyFile = (localFilePath: string, isServer: boolean) => {
 const onCompressFile = async (localFilePath: string) => {
   return new Promise((resolve, reject) => {
     const spinner = ora({
-      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)} ...`)
+      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(ompatiblePath(localFilePath, 'dist'))} ...`)
     }).start();
     const archive = archiver('zip', {
       zlib: { level: 9 }
     }).on('error', (err: Error) => {
       console.log(beautyLog.error, chalk.red(`压缩本地文件失败: ${err}`));
     });
-    const output = fs.createWriteStream(`${localFilePath}/dist.zip`);
+    const output = fs.createWriteStream(ompatiblePath(localFilePath, 'dist.zip'));
     output.on('close', (err: Error) => {
       if (err) {
-        spinner.fail(chalk.redBright(`压缩文件: ${chalk.cyan(`${localFilePath}/dist`)} 失败`));
+        spinner.fail(chalk.redBright(`压缩文件: ${chalk.cyan(ompatiblePath(localFilePath, 'dist'))} 失败`));
         console.log(beautyLog.error, chalk.red(`压缩本地文件失败: ${err}`));
         reject(err);
         process.exit(1);
       }
-      spinner.succeed(chalk.greenBright(`压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)} 成功`));
+      spinner.succeed(chalk.greenBright(`压缩本地文件: ${chalk.cyan(ompatiblePath(localFilePath, 'dist'))} 成功`));
       resolve(1);
     });
     archive.pipe(output);
     // 第二参数表示在压缩包中创建 dist 目录，将压缩内容放在 dist 目录下，而不是散列到压缩包的根目录
-    archive.directory(`${localFilePath}/dist`, '/dist');
+    archive.directory(ompatiblePath(localFilePath, 'dist'), '/dist');
     archive.finalize();
   });
 };
@@ -68,7 +75,7 @@ const onCompressFile = async (localFilePath: string) => {
 const onCompressServiceFile = async (localFilePath: string) => {
   return new Promise((resolve, reject) => {
     const spinner = ora({
-      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(`${localFilePath}/dist`)} ...`)
+      text: chalk.yellowBright(`正在压缩本地文件: ${chalk.cyan(ompatiblePath(localFilePath, 'dist'))} ...`)
     }).start();
     const srcPath = `${localFilePath}/src`;
     const uploadPath = `${srcPath}/upload`;
@@ -79,21 +86,23 @@ const onCompressServiceFile = async (localFilePath: string) => {
     }).on('error', (err: Error) => {
       console.log(beautyLog.error, chalk.red(`压缩本地文件失败: ${err}`));
     });
-    const output = fs.createWriteStream(`${localFilePath}/dist.zip`);
+    const output = fs.createWriteStream(ompatiblePath(localFilePath, 'dist.zip'));
     output.on('close', (err: Error) => {
       if (!err) {
         fs.moveSync(tempUploadPath, uploadPath, { overwrite: true });
-        spinner.succeed(chalk.greenBright(`压缩本地文件: ${chalk.cyan(`${localFilePath}/src`)} 等文件成功`));
+        spinner.succeed(
+          chalk.greenBright(`压缩本地文件: ${chalk.cyan(ompatiblePath(localFilePath, 'src'))} 等文件成功`)
+        );
         resolve(1);
       } else {
-        spinner.fail(chalk.redBright(`压缩本地文件: ${chalk.cyan(`${localFilePath}/src`)} 等文件失败`));
+        spinner.fail(chalk.redBright(`压缩本地文件: ${chalk.cyan(ompatiblePath(localFilePath, 'src'))} 等文件失败`));
         console.log(beautyLog.error, chalk.red(`压缩本地文件失败: ${err}`));
         reject(err);
         process.exit(1);
       }
     });
     archive.pipe(output);
-    archive.directory(`${localFilePath}/src`, '/src');
+    archive.directory(ompatiblePath(localFilePath, 'src'), '/src');
     archive.file(path.join(localFilePath, 'package.json'), { name: 'package.json' });
     archive.file(path.join(localFilePath, 'yarn.lock'), { name: 'yarn.lock' });
     archive.finalize();
@@ -130,6 +139,7 @@ const onPutFile = async (localFilePath: string, remoteFilePath: string) => {
 
 // 解压文件
 const onUnzipZip = async (remotePath: string, isServer: boolean) => {
+  remotePath = ompatiblePath(remotePath);
   const spinner = ora({
     text: chalk.yellowBright(`正在解压服务器文件: ${chalk.cyan(`${remotePath}/dist.zip`)} ...`)
   }).start();
@@ -151,6 +161,7 @@ const onUnzipZip = async (remotePath: string, isServer: boolean) => {
 
 // 服务器安装依赖
 const onInstall = async (remotePath: string) => {
+  remotePath = ompatiblePath(remotePath);
   const spinner = ora({
     text: chalk.yellowBright(chalk.cyan('正在安装依赖...'))
   }).start();

@@ -9,7 +9,8 @@ import {
   onRestartNginx,
   onCheckNginxConfigLocal,
   checkFileExistence,
-  onRemoveServerFile
+  onRemoveServerFile,
+  ompatiblePath
 } from './utils';
 import { Options, PublishConfigParams, CollectInfoParams } from './types';
 
@@ -17,6 +18,8 @@ const ssh = new NodeSSH();
 
 // 备份远程 nginx 配置
 const onBackupNginxConfig = async (remoteFilePath: string, backupPath = `${remoteFilePath}/nginx_copy.conf`) => {
+  remoteFilePath = ompatiblePath(remoteFilePath);
+  backupPath = ompatiblePath(backupPath);
   const spinner = ora({
     text: chalk.yellowBright('正在备份远程 nginx.conf 文件...')
   }).start();
@@ -31,6 +34,8 @@ const onBackupNginxConfig = async (remoteFilePath: string, backupPath = `${remot
 
 // 读取本地 nginx 配置并推送到远程服务器
 const onPutNginxConfig = async (localFilePath: string, remoteFilePath: string) => {
+  localFilePath = ompatiblePath(localFilePath);
+  remoteFilePath = ompatiblePath(remoteFilePath);
   const spinner = ora({
     text: chalk.yellowBright('正在推送 nginx.conf 文件到远程服务器...')
   }).start();
