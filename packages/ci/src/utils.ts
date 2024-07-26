@@ -76,14 +76,14 @@ export const updateVersion = (version: string) => {
 };
 
 // 校验文件是否存在
-export const verifyFile = (path: string) => {
-  return fs.existsSync(path);
+export const verifyFile = (url: string) => {
+  return fs.existsSync(path.resolve(url));
 };
 
 // 校验文件夹是否存在
-export const verifyFolder = (path: string) => {
+export const verifyFolder = (url: string) => {
   try {
-    const stats = fs.statSync(path);
+    const stats = fs.statSync(path.resolve(url));
     return stats.isDirectory();
   } catch (err) {
     return false;
@@ -101,7 +101,8 @@ export const isValidFilePath = (path: string) => {
 export const getPublishConfig = () => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const config = require(`${process.cwd()}/publish.config.js`);
+    const config = require(`${path.resolve(process.cwd(), 'publish.config.js')}`);
+    console.log(config, 'config')
     return config;
   } catch (error) {
     return null;
@@ -370,9 +371,9 @@ const onCheckNginxConfig = async (remoteFilePath: string, restartPath: string, s
 };
 
 // 校验服务器文件是否存在
-export const checkFileExistence = async (path: string, ssh: NodeSSH) => {
+export const checkFileExistence = async (url: string, ssh: NodeSSH) => {
   try {
-    const res = await ssh.execCommand(`ls ${path}`);
+    const res = await ssh.execCommand(`ls ${path.resolve(url)}`);
     if (res.code !== 0 && res.stderr) {
       console.error(chalk.redBright(`服务器文件 ${chalk.cyan(path)} - ${res.stderr}`));
       process.exit(1);
