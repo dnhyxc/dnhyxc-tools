@@ -38,70 +38,53 @@ npx dnhyxc-ci publish projectName
 
 ### 配置项目发布文件
 
-在需要发布的项目根目录下，创建 `publish.config.js` 配置文件，当然可以不创建该文件，直接在命令行中指定参数，或者通过交互式命令行输入。配置该文件，可以大大提高发布时的效率，减少手动输入的内容。具体参考以下示例：
+在需要发布的项目根目录下，创建 `publish.config.json` 配置文件，当然可以不创建该文件，直接在命令行中指定参数，或者通过交互式命令行输入。配置该文件，可以大大提高发布时的效率，减少手动输入的内容。具体参考以下示例：
 
-```js
-module.exports = {
-  // 服务器配置
-  serverInfo: {
-    // 目标服务器IP
-    host: '106.69.29.11',
-    // 目标服务器用户名
-    username: 'root',
-    // 端口号
-    port: 22
+```json
+{
+  "serverInfo": {
+    "host": "106.69.29.11",
+    "username": "root",
+    "port": "22"
   },
-  // nginx配置
-  nginxInfo: {
-    remoteFilePath: '/usr/local/nginx/conf',
-    restartPath: '/usr/local/nginx/sbin'
+  "nginxInfo": {
+    "remoteFilePath": "/usr/local/nginx/conf",
+    "restartPath": "/usr/local/nginx/sbin"
   },
-  // node服务配置
-  serviceInfo: {
-    restartPath: '/usr/local/server'
+  "serviceInfo": {
+    "restartPath": "/usr/local/server"
   },
-  // 项目配置
-  // 前端项目一
-  dnhyxc: {
-    name: 'dnhyxc',
-    // 本地项目路径
-    localFilePath: '/Users/dnhyxc/Documents/code/dnhyxc',
-    // 目标服务器项目文件路径
-    remoteFilePath: '/usr/local/nginx/dnhyxc',
-    // 标识是否是服务端项目
-    isServer: false
+  "dnhyxc": {
+    "name": "dnhyxc",
+    "localFilePath": "/Users/dnhyxc/Documents/code/dnhyxc",
+    "remoteFilePath": "/usr/local/nginx/dnhyxc",
+    "isServer": false
   },
-  // 前端项目二
-  blogClientWeb: {
-    name: 'html',
-    // 本地项目路径
-    localFilePath: '/Users/dnhyxc/Documents/code/blog-client-web',
-    // 目标服务器项目文件路径
-    remoteFilePath: '/usr/local/nginx/html',
-    // 标识是否是服务端项目
-    isServer: false
+  "example": {
+    "name": "dnhyxc",
+    "localFilePath": "/Users/dnhyxc/Documents/code/dnhyxc",
+    "remoteFilePath": "/usr/local/nginx/dnhyxc",
+    "isServer": false
   },
-  // 前端项目三
-  blogAdminWeb: {
-    name: 'admin_html',
-    // 本地项目路径
-    localFilePath: '/Users/dnhyxc/Documents/code/blog-admin-web',
-    // 目标服务器项目文件路径
-    remoteFilePath: '/usr/local/nginx/html_admin',
-    // 标识是否是服务端项目
-    isServer: false
+  "blogClientWeb": {
+    "name": "html",
+    "localFilePath": "/Users/dnhyxc/Documents/code/blog-client-web",
+    "remoteFilePath": "/usr/local/nginx/html",
+    "isServer": false
   },
-  // 服务端项目
-  blogServerWeb: {
-    name: 'server',
-    // 本地项目路径
-    localFilePath: '/Users/dnhyxc/Documents/code/blog-server-web',
-    // 目标服务器项目文件路径
-    remoteFilePath: '/usr/local/server',
-    // 标识是否是服务端项目
-    isServer: true
+  "blogAdminWeb": {
+    "name": "admin_html",
+    "localFilePath": "/Users/dnhyxc/Documents/code/blog-admin-web",
+    "remoteFilePath": "/usr/local/nginx/html_admin",
+    "isServer": false
+  },
+  "blogServerWeb": {
+    "name": "server",
+    "localFilePath": "/Users/dnhyxc/Documents/code/blog-server-web",
+    "remoteFilePath": "/usr/local/server",
+    "isServer": true
   }
-};
+}
 ```
 
 ### 查看帮助
@@ -118,7 +101,7 @@ dnhyxc --help
 
 ### 发布项目
 
-通过 `dnhyxc-ci publish <projectName>` 命令发布项目，其中 `<projectName>` 为 `publish.config.js` 配置文件中 `projectInfo` 下的项目名称。
+通过 `dnhyxc-ci publish <projectName>` 命令发布项目，其中 `<projectName>` 为 `publish.config.json` 配置文件中 `projectInfo` 下的项目名称。
 
 ```yaml
 dnhyxc-ci publish projectName

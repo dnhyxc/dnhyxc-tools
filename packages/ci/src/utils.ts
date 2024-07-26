@@ -105,10 +105,10 @@ export const isValidFilePath = (path: string) => {
 // 获取项目发布配置信息
 export const getPublishConfig = () => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const config = require(`${ompatiblePath(process.cwd(), 'publish.config.js')}`);
+    const config = JSON.parse(fs.readFileSync(`${ompatiblePath(process.cwd(), 'publish.config.json')}`, 'utf8'));
     return config;
   } catch (error) {
+    console.log(beautyLog.warning, chalk.redBright(`未找到 ${chalk.cyan('publish.config.json')} 相关发布配置`));
     return null;
   }
 };

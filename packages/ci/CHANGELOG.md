@@ -1,5 +1,11 @@
 # dnhyxc-ci
 
+## 0.0.22
+
+### Patch Changes
+
+- 优化读取项目发布配置的方式
+
 ## 0.0.21
 
 ### Patch Changes
