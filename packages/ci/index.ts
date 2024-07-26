@@ -59,12 +59,12 @@ program
   .option('-p, --port [port]', '输入端口号')
   .option('-u, --username [username]', '输入用户名')
   .option('-m, --password [password]', '输入密码')
-  .option('-l, --lcalFilePath [lcalFilePath]', '输入本地文件路径，必须以 / 开头')
+  .option('-l, --localFilePath [localFilePath]', '输入本地文件路径，必须以 / 开头')
   .option('-r, --remoteFilePath [remoteFilePath]', '输入服务器目标文件路径，必须以 / 开头')
   .option('-s, --isServer [isServer]', '是否是 node 服务端项目，只允许输入 true 或 false')
   .option('-i, --install', '是否需要安装依赖')
   .action((name, option) => {
-    if (option?.lcalFilePath && !isValidFilePath(option?.lcalFilePath)) {
+    if (option?.localFilePath && !isValidFilePath(option?.localFilePath)) {
       console.log(`\n${chalk.redBright('Error: 本地文件路径必须以 / 开头')}\n`);
       process.exit(1);
     }

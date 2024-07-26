@@ -104,7 +104,9 @@ const onCompressServiceFile = async (localFilePath: string) => {
     archive.pipe(output);
     archive.directory(ompatiblePath(localFilePath, 'src'), '/src');
     archive.file(path.join(localFilePath, 'package.json'), { name: 'package.json' });
-    archive.file(path.join(localFilePath, 'yarn.lock'), { name: 'yarn.lock' });
+    if (verifyFile(`${localFilePath}/yarn.lock`)) {
+      archive.file(path.join(localFilePath, 'yarn.lock'), { name: 'yarn.lock' });
+    }
     archive.finalize();
   });
 };

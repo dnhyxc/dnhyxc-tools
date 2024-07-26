@@ -1,5 +1,11 @@
 # dnhyxc-ci
 
+## 0.0.21
+
+### Patch Changes
+
+- 兼容不同操作系统文件路径问题
+
 ## 0.0.20
 
 ### Patch Changes
