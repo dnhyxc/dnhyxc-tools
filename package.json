@@ -1,6 +1,6 @@
 {
   "name": "dnhyxc-tools",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "工具库",
   "scripts": {
     "create": "node ./scripts/create-config.mjs",
@@ -8,7 +8,7 @@
     "build:ci": "pnpm -r --filter=./packages/ci run build",
     "rebuild": "pnpm -r --filter=./packages/ci run build && rm -rf node_modules && pnpm install && npm link",
     "build:cli": "pnpm -r --filter=./packages/cli run build",
-    "release": "pnpm changeset publish --force-publish=dnhyxc-ci@0.0.22",
+    "release": "pnpm changeset publish",
     "publish": "pnpm --filter=./packages/* run build && pnpm changeset && pnpm changeset version && pnpm changeset publish",
     "publish:ci": "pnpm --filter=./packages/ci run build && pnpm changeset && pnpm changeset version && pnpm changeset publish",
     "prepare": "husky install",
