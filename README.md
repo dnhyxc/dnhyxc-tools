@@ -88,7 +88,15 @@ npm run publish
 
 ### 开发注意事项
 
-1. node 需要使用 v18+ 的版本，否则打包会报错。
+1. node 需要使用 v18+ 的版本，否则打包会报错。只要看到控制台报如下错误，就需要升级 node 版本：
+
+```
+Oops! Something went wrong! :(
+
+ESLint: 8.57.0
+
+xxx
+```
 
 2. 如果需要在 example 中使用本地的子包，需要在 pnpm-workspace.yaml 中添加 example 项目，否则会导致 example 项目找不到本地的子包。
 
