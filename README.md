@@ -85,3 +85,25 @@ npm run release
 ```yaml
 npm run publish
 ```
+
+### 开发注意事项
+
+1. node 需要使用 v18+ 的版本，否则打包会报错。
+
+2. 如果需要在 example 中使用本地的子包，需要在 pnpm-workspace.yaml 中添加 example 项目，否则会导致 example 项目找不到本地的子包。
+
+```yaml
+packages:
+  - example/
+  - 'packages/**'
+```
+
+3. 采用 workspace 这种方式，example 项目可以通过 `pnpm i` 安装对应的子包，从而直接使用本地的子包，同时只要引用的子包重新 build 之后，example 项目也会自动更新，无需重复安装。
+
+```json
+{
+  "dnhyxc": "workspace:^",
+  "dnhyxc-ci": "workspace:^",
+  "dnhyxc-vite-plugins": "workspace:^"
+}
+```
