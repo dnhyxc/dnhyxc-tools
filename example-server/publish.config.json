@@ -1,0 +1,20 @@
+{
+  "serverInfo": {
+    "host": "101.43.50.15",
+    "username": "root",
+    "port": "22"
+  },
+  "nginxInfo": {
+    "remoteFilePath": "/usr/local/nginx/conf",
+    "restartPath": "/usr/local/nginx/sbin"
+  },
+  "serviceInfo": {
+    "restartPath": "/usr/local/example-server"
+  },
+  "exampleServer": {
+    "name": "server",
+    "localFilePath": "E:\\code\\dnhyxc-tools\\example-server",
+    "remoteFilePath": "/usr/local/server",
+    "isServer": true
+  }
+}

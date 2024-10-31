@@ -1,6 +1,6 @@
 {
   "serverInfo": {
-    "host": "109.99.99.99",
+    "host": "101.43.50.15",
     "username": "root",
     "port": "22"
   },
@@ -19,7 +19,7 @@
   },
   "example": {
     "name": "dnhyxc",
-    "localFilePath": "/Users/dnhyxc/Documents/code/dnhyxc-tools/example",
+    "localFilePath": "E:\\code\\dnhyxc-tools\\example",
     "remoteFilePath": "/usr/local/nginx/example",
     "isServer": false
   },

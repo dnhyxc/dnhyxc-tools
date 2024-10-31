@@ -1,0 +1,47 @@
+{
+  "name": "example-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:dnhyxc/dnhyxc-tools.git",
+  "author": "dengnh <2640559435@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon ./src/main.js",
+    "dev": "cross-env NODE_ENV=development nodemon ./src/main.js",
+    "pull": "dnhyxc-ci pull -ncp /usr/local/nginx/conf -p 22 -u root",
+    "push": "dnhyxc-ci push -ncp /usr/local/nginx/conf1 -nrp /usr/local/nginx/sbin",
+    "restart:nginx": "dnhyxc-ci restart nginx",
+    "restart:node": "dnhyxc-ci restart node",
+    "publish": "dnhyxc-ci publish exampleServer"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "bcryptjs": "^2.4.3",
+    "cross-env": "^7.0.3",
+    "crypto-js": "^4.2.0",
+    "js-md5": "^0.8.3",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.4",
+    "koa-body": "^5.0.0",
+    "koa-combine-routers": "^4.0.2",
+    "koa-router": "^11.0.1",
+    "koa-static": "^5.0.0",
+    "mongoose": "^6.4.4",
+    "multiparty": "^4.2.3",
+    "node-ssh": "^13.2.0",
+    "socket.io": "^4.7.2",
+    "ts-node": "^10.8.2",
+    "tslib": "^2.4.0",
+    "vm2": "^3.9.19",
+    "ws": "^8.12.0"
+  },
+  "devDependencies": {
+    "axios": "^1.6.8",
+    "dnhyxc": "^0.0.13",
+    "dnhyxc-ci": "^1.0.0",
+    "fs-extra": "^11.2.0",
+    "nodemon": "^2.0.19",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.7.4"
+  }
+}

@@ -141,7 +141,6 @@ const onPutFile = async (localFilePath: string, remoteFilePath: string) => {
 
 // 解压文件
 const onUnzipZip = async (remotePath: string, isServer: boolean) => {
-  remotePath = ompatiblePath(remotePath);
   const spinner = ora({
     text: chalk.yellowBright(`正在解压服务器文件: ${chalk.cyan(`${remotePath}/dist.zip`)} ...`)
   }).start();
@@ -163,7 +162,6 @@ const onUnzipZip = async (remotePath: string, isServer: boolean) => {
 
 // 服务器安装依赖
 const onInstall = async (remotePath: string) => {
-  remotePath = ompatiblePath(remotePath);
   const spinner = ora({
     text: chalk.yellowBright(chalk.cyan('正在安装依赖...'))
   }).start();

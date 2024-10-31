@@ -1,0 +1,8 @@
+node_modules/
+demo/
+upload/
+.vscode
+.idea
+compile
+dist
+dist.zip

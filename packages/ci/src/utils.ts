@@ -39,7 +39,7 @@ const main = {
   info: chalk.blue('ℹ'),
   success: chalk.green('✨'),
   warning: chalk.yellow('⚠️'),
-  error: chalk.red('✖️'),
+  error: chalk.red('×'),
   star: chalk.cyan('✵'),
   arrow: chalk.yellow('➦')
 };
@@ -48,7 +48,7 @@ const fallback = {
   info: chalk.blue('i'),
   success: chalk.green('✔'),
   warning: chalk.yellow('‼'),
-  error: chalk.red('✖️'),
+  error: chalk.red('×'),
   star: chalk.cyan('✵'),
   arrow: chalk.yellow('->')
 };
@@ -309,16 +309,14 @@ export const onRemoveFile = async (localFile: string) => {
 
 // 删除服务器文件
 export const onRemoveServerFile = async (localFile: string, ssh: NodeSSH) => {
-  const fullPath = ompatiblePath(localFile);
-  console.info(fullPath, 'fullPath')
   const spinner = ora({
-    text: chalk.yellowBright(`正在删除服务器文件: ${chalk.cyan(fullPath)} ...`)
+    text: chalk.yellowBright(`正在删除服务器文件: ${chalk.cyan(localFile)} ...`)
   }).start();
   try {
-    await ssh.execCommand(`rm -rf ${fullPath}`);
-    spinner.succeed(chalk.greenBright(`删除服务器文件: ${chalk.cyan(`${fullPath}`)} 成功`));
+    await ssh.execCommand(`rm -rf ${localFile}`);
+    spinner.succeed(chalk.greenBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 成功`));
   } catch (err) {
-    spinner.fail(chalk.redBright(`删除服务器文件: ${chalk.cyan(`${fullPath}`)} 失败，${err}`));
+    spinner.fail(chalk.redBright(`删除服务器文件: ${chalk.cyan(`${localFile}`)} 失败，${err}`));
     process.exit(1);
   }
 };
@@ -411,7 +409,6 @@ export const onRestartNginx = async (remoteFilePath: string, restartPath: string
 
 // 重启后台项目
 export const onRestartServer = async (remotePath: string, ssh: NodeSSH) => {
-  remotePath = ompatiblePath(remotePath);
   const spinner = ora({
     text: chalk.yellowBright(chalk.cyan('正在重启服务...'))
   }).start();
