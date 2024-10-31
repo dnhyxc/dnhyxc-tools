@@ -192,6 +192,8 @@ const onPublish = async ({
   install,
   isServer
 }: Options) => {
+  console.info(localFilePath, 'localFilePath')
+  console.info(remoteFilePath,'remoteFilePath')
   try {
     await onConnectServer({
       host,
@@ -266,9 +268,9 @@ export const publish = async (projectName: string, options: Omit<Options, 'isSer
       !isVerified &&
         onVerifyFile(
           _localFilePath ||
-            options.localFilePath ||
-            (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
-            process.cwd(),
+          options.localFilePath ||
+          (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
+          process.cwd(),
           _isServer === 'true' || options.isServer || !!isService
         );
 
@@ -311,8 +313,8 @@ export const publish = async (projectName: string, options: Omit<Options, 'isSer
           name: 'isServer',
           type:
             _isServer !== undefined ||
-            _install ||
-            getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
+              _install ||
+              getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
               ? null
               : 'toggle',
           message: '是否是后台服务:',
