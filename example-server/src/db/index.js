@@ -1,13 +1,13 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const connectMongodb = () => {
   mongoose
-    .connect("mongodb://127.0.0.1:27017/blog_web")
+    .connect('mongodb://127.0.0.1:27017/dnhyxc')
     .then(() => {
-      console.log("mongoose connect success");
+      console.log('mongoose connect success');
     })
     .catch((err) => {
-      console.log("mongoose connect error", err);
+      console.log('mongoose connect error', err);
     });
 };
 

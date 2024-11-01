@@ -1,14 +1,14 @@
-const PORT = 9112;
+const PORT = 9002;
 
-const HOST = "127.0.0.1";
+const HOST = '127.0.0.1';
 
-const APP_PORT = 9112;
+const APP_PORT = 9002;
 
-const JWT_SECRET = "DNHYXC90220911010613WYH1101DCX9022DZC0613DNH";
+const JWT_SECRET = 'euiqwyeuqwyesdhjashdkjaslkdjaslzmnxcmznxcbnzbcnzbc.nz';
 
 // 随机生成的字符集
 const CHARACTERS =
-  "ABCDEFGHIJKLMNPQRSTUVWXYZ123456789abcdefghijklmnpqrstuvwxyz";
+  'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789abcdefghijklmnpqrstuvwxyz';
 
 module.exports = {
   PORT,

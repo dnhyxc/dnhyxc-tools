@@ -190,8 +190,6 @@ const onPublish = async ({
   install,
   isServer
 }: Options) => {
-  console.info(localFilePath, 'localFilePath')
-  console.info(remoteFilePath,'remoteFilePath')
   try {
     await onConnectServer({
       host,

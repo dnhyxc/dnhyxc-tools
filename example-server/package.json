@@ -37,8 +37,6 @@
   },
   "devDependencies": {
     "axios": "^1.6.8",
-    "dnhyxc": "^0.0.13",
-    "dnhyxc-ci": "^1.0.0",
     "fs-extra": "^11.2.0",
     "nodemon": "^2.0.19",
     "rimraf": "^3.0.2",
