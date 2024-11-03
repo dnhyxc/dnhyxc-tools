@@ -13,11 +13,11 @@ const {
   verifyAdminUpdateInfo,
   verifyAdminUser,
   verifyAdminUserExists,
-} = require("./user.middleware");
+} = require('./user.middleware');
 
-const { auth, adminAuth } = require("./auth.middleware");
+const { auth, adminAuth } = require('./auth.middleware');
 
-const { verifyCollection, countApiCalls } = require("./common.middleware");
+const { verifyCollection, countApiCalls } = require('./common.middleware');
 
 module.exports = {
   userValidator,

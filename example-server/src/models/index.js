@@ -1,7 +1,7 @@
 const Todo = require('./web');
-const User = require('./admin');
+const WebUser = require('./admin');
 
 module.exports = {
   Todo,
-  User
+  WebUser
 };

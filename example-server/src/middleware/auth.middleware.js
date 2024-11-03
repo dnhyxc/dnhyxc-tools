@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config");
-const { findUserById, adminFindUserById } = require("../service");
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config');
+const { findUserById, adminFindUserById } = require('../service');
 const {
   TokenExpiredError,
   JsonWebTokenError,
@@ -8,22 +8,22 @@ const {
   databaseError,
   userNotFind,
   userIsDelete,
-} = require("../constant");
+} = require('../constant');
 
 const auth = async (ctx, next) => {
   const { fromDetail } = ctx.request.body;
 
   try {
     const { authorization } = ctx.request.header;
-    const token = authorization.replace("Bearer ", "");
+    const token = authorization.replace('Bearer ', '');
     const userInfo = jwt.verify(token, JWT_SECRET);
     const { userId, username, password } = userInfo._doc;
     const res = await findUserById(userId);
     if (!res) {
-      return ctx.app.emit("error", userNotFind, ctx);
+      return ctx.app.emit('error', userNotFind, ctx);
     }
     if (res?.isDelete) {
-      return ctx.app.emit("error", userIsDelete, ctx);
+      return ctx.app.emit('error', userIsDelete, ctx);
     }
     const user = {
       id: userId,
@@ -33,22 +33,22 @@ const auth = async (ctx, next) => {
     ctx.state.user = user;
   } catch (error) {
     switch (error.name) {
-      case "TokenExpiredError":
-        // console.error("token已过期", error);
-        return ctx.app.emit(
-          "error",
-          !fromDetail ? JsonWebTokenError : DetailTokenExpiredError,
-          ctx
-        );
-      case "JsonWebTokenError":
-        // console.error("无效的token", error);
-        return ctx.app.emit(
-          "error",
-          !fromDetail ? JsonWebTokenError : DetailTokenExpiredError,
-          ctx
-        );
-      default:
-        return ctx.app.emit("error", databaseError, ctx);
+    case 'TokenExpiredError':
+      // console.error('token已过期', error);
+      return ctx.app.emit(
+        'error',
+        !fromDetail ? JsonWebTokenError : DetailTokenExpiredError,
+        ctx
+      );
+    case 'JsonWebTokenError':
+      // console.error('无效的token', error);
+      return ctx.app.emit(
+        'error',
+        !fromDetail ? JsonWebTokenError : DetailTokenExpiredError,
+        ctx
+      );
+    default:
+      return ctx.app.emit('error', databaseError, ctx);
     }
   }
 
@@ -58,12 +58,12 @@ const auth = async (ctx, next) => {
 const adminAuth = async (ctx, next) => {
   try {
     const { authorization } = ctx.request.header;
-    const token = authorization.replace("Bearer ", "");
+    const token = authorization.replace('Bearer ', '');
     const userInfo = jwt.verify(token, JWT_SECRET);
     const { userId, username, password } = userInfo._doc;
     const res = await adminFindUserById(userId);
     if (!res) {
-      return ctx.app.emit("error", userNotFind, ctx);
+      return ctx.app.emit('error', userNotFind, ctx);
     }
     const user = {
       id: userId,
@@ -73,14 +73,14 @@ const adminAuth = async (ctx, next) => {
     ctx.state.user = user;
   } catch (error) {
     switch (error.name) {
-      case "TokenExpiredError":
-        // console.error("token已过期", error);
-        return ctx.app.emit("error", TokenExpiredError, ctx);
-      case "JsonWebTokenError":
-        // console.error("无效的token", error);
-        return ctx.app.emit("error", JsonWebTokenError, ctx);
-      default:
-        return ctx.app.emit("error", databaseError, ctx);
+    case 'TokenExpiredError':
+      // console.error('token已过期', error);
+      return ctx.app.emit('error', TokenExpiredError, ctx);
+    case 'JsonWebTokenError':
+      // console.error('无效的token', error);
+      return ctx.app.emit('error', JsonWebTokenError, ctx);
+    default:
+      return ctx.app.emit('error', databaseError, ctx);
     }
   }
 

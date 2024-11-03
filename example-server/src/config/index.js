@@ -1,8 +1,8 @@
-const PORT = 9002;
+const PORT = 9012;
 
 const HOST = '127.0.0.1';
 
-const APP_PORT = 9002;
+const APP_PORT = 9012;
 
 const JWT_SECRET = 'euiqwyeuqwyesdhjashdkjaslkdjaslzmnxcmznxcbnzbcnzbc.nz';
 

@@ -1,12 +1,11 @@
-const bcrypt = require("bcryptjs");
+const bcrypt = require('bcryptjs');
 const {
   findOneUser,
   findUserById,
   adminFindOneUser,
   adminFindUserById,
-} = require("../service");
+} = require('../service');
 const {
-  databaseError,
   userFormateError,
   userAlreadyExited,
   userNotFind,
@@ -16,13 +15,13 @@ const {
   fieldFormateError,
   userNotExist,
   verifyUserError,
-} = require("../constant");
+} = require('../constant');
 
 // 校验用户名或密码是否为空
 const userValidator = async (ctx, next) => {
   const { username, password } = ctx.request.body;
   if (!username || !password) {
-    return ctx.app.emit("error", userFormateError, ctx);
+    return ctx.app.emit('error', userFormateError, ctx);
   }
   await next();
 };
@@ -32,7 +31,7 @@ const verifyUser = async (ctx, next) => {
   const { username } = ctx.request.body;
 
   if (!username) {
-    ctx.app.emit("error", fieldFormateError, ctx);
+    ctx.app.emit('error', fieldFormateError, ctx);
     return;
   }
 
@@ -40,11 +39,11 @@ const verifyUser = async (ctx, next) => {
     try {
       const filter = { username };
       if (await findOneUser(filter)) {
-        return ctx.app.emit("error", userAlreadyExited, ctx);
+        return ctx.app.emit('error', userAlreadyExited, ctx);
       }
       await next();
     } catch (error) {
-      ctx.app.emit("error", verifyUserError, ctx);
+      ctx.app.emit('error', verifyUserError, ctx);
     }
   }
 };
@@ -54,7 +53,7 @@ const verifyAdminUser = async (ctx, next) => {
   const { username } = ctx.request.body;
 
   if (!username) {
-    ctx.app.emit("error", fieldFormateError, ctx);
+    ctx.app.emit('error', fieldFormateError, ctx);
     return;
   }
 
@@ -62,11 +61,11 @@ const verifyAdminUser = async (ctx, next) => {
     try {
       const filter = { username };
       if (await adminFindOneUser(filter)) {
-        return ctx.app.emit("error", userAlreadyExited, ctx);
+        return ctx.app.emit('error', userAlreadyExited, ctx);
       }
       await next();
     } catch (error) {
-      ctx.app.emit("error", verifyUserError, ctx);
+      ctx.app.emit('error', verifyUserError, ctx);
     }
   }
 };
@@ -76,18 +75,18 @@ const verifyUserExists = async (ctx, next) => {
   const { userId } = ctx.request.body;
 
   if (!userId) {
-    ctx.app.emit("error", fieldFormateError, ctx);
+    ctx.app.emit('error', fieldFormateError, ctx);
     return;
   }
 
   try {
     const user = await findUserById(userId);
     if (!user) {
-      return ctx.app.emit("error", userNotExist, ctx);
+      return ctx.app.emit('error', userNotExist, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 
@@ -96,18 +95,18 @@ const verifyAdminUserExists = async (ctx, next) => {
   const { userId } = ctx.request.body;
 
   if (!userId) {
-    ctx.app.emit("error", fieldFormateError, ctx);
+    ctx.app.emit('error', fieldFormateError, ctx);
     return;
   }
 
   try {
     const user = await adminFindUserById(userId);
     if (!user) {
-      return ctx.app.emit("error", userNotExist, ctx);
+      return ctx.app.emit('error', userNotExist, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 
@@ -116,18 +115,18 @@ const verifyUserExistsByUsername = async (ctx, next) => {
   const { username } = ctx.request.body;
 
   if (!username) {
-    ctx.app.emit("error", fieldFormateError, ctx);
+    ctx.app.emit('error', fieldFormateError, ctx);
     return;
   }
 
   try {
     const user = await findOneUser({ username });
     if (!user) {
-      return ctx.app.emit("error", userNotExist, ctx);
+      return ctx.app.emit('error', userNotExist, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 
@@ -135,18 +134,18 @@ const verifyUserExistsByUsername = async (ctx, next) => {
 const verifyAdminUserExistsByUsername = async (ctx, next) => {
   const { username } = ctx.request.body;
   if (!username) {
-    ctx.app.emit("error", fieldFormateError, ctx);
+    ctx.app.emit('error', fieldFormateError, ctx);
     return;
   }
 
   try {
     const user = await adminFindOneUser({ username });
     if (!user) {
-      return ctx.app.emit("error", userNotExist, ctx);
+      return ctx.app.emit('error', userNotExist, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 
@@ -154,7 +153,7 @@ const verifyAdminUserExistsByUsername = async (ctx, next) => {
 const bcryptPassword = async (ctx, next) => {
   const { password } = ctx.request.body;
   if (!password) {
-    ctx.app.emit("error", fieldFormateError, ctx);
+    ctx.app.emit('error', fieldFormateError, ctx);
     return;
   }
   const salt = bcrypt.genSaltSync(10);
@@ -168,7 +167,7 @@ const bcryptPassword = async (ctx, next) => {
 const bcryptPhone = async (ctx, next) => {
   const { phone } = ctx.request.body;
   if (!phone) {
-    ctx.app.emit("error", fieldFormateError, ctx);
+    ctx.app.emit('error', fieldFormateError, ctx);
     return;
   }
   const salt = bcrypt.genSaltSync(10);
@@ -186,15 +185,15 @@ const verifyPhone = async (ctx, next) => {
     const filter = { username };
     const user = await findOneUser(filter);
     if (!user) {
-      return ctx.app.emit("error", userNotFind, ctx);
+      return ctx.app.emit('error', userNotFind, ctx);
     }
     const checkPhone = bcrypt.compareSync(phone, user.phone);
     if (!checkPhone) {
-      return ctx.app.emit("error", userPhoneError, ctx);
+      return ctx.app.emit('error', userPhoneError, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 
@@ -205,15 +204,15 @@ const verifyLogin = async (ctx, next) => {
     const filter = { username };
     const user = await findOneUser(filter);
     if (!user) {
-      return ctx.app.emit("error", userNotFind, ctx);
+      return ctx.app.emit('error', userNotFind, ctx);
     }
     const checkPwd = bcrypt.compareSync(password, user.password);
     if (!checkPwd) {
-      return ctx.app.emit("error", userPwdError, ctx);
+      return ctx.app.emit('error', userPwdError, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 
@@ -224,15 +223,15 @@ const verifyAdminLogin = async (ctx, next) => {
     const filter = { username };
     const user = await adminFindOneUser(filter);
     if (!user) {
-      return ctx.app.emit("error", userNotFind, ctx);
+      return ctx.app.emit('error', userNotFind, ctx);
     }
     const checkPwd = bcrypt.compareSync(password, user.password);
     if (!checkPwd) {
-      return ctx.app.emit("error", userPwdError, ctx);
+      return ctx.app.emit('error', userPwdError, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 
@@ -244,11 +243,11 @@ const verifyUpdateInfo = async (ctx, next) => {
     // 校验密码是否一致
     const checkPwd = bcrypt.compareSync(password, user.password);
     if (checkPwd) {
-      return ctx.app.emit("error", pwdNotChange, ctx);
+      return ctx.app.emit('error', pwdNotChange, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 
@@ -260,11 +259,11 @@ const verifyAdminUpdateInfo = async (ctx, next) => {
     // 校验密码是否一致
     const checkPwd = bcrypt.compareSync(password, user.password);
     if (checkPwd) {
-      return ctx.app.emit("error", pwdNotChange, ctx);
+      return ctx.app.emit('error', pwdNotChange, ctx);
     }
     await next();
   } catch (error) {
-    ctx.app.emit("error", verifyUserError, ctx);
+    ctx.app.emit('error', verifyUserError, ctx);
   }
 };
 

@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
-const adminDemoSchema = new mongoose.Schema({
-  title: String,
-  userId: String
+const userSchema = new mongoose.Schema({
+  username: String,
+  userId: String,
+  createTime: Number
 });
 
-const AdminDemo = mongoose.model('adminDemo', adminDemoSchema);
+const WebUser = mongoose.model('webuser', userSchema);
 
-module.exports = AdminDemo;
+module.exports = WebUser;
