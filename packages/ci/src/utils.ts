@@ -350,14 +350,12 @@ export const onCheckNginxConfigLocal = () => {
 
 // 校验 nginx 文件是否有效
 const onCheckNginxConfig = async (remoteFilePath: string, restartPath: string, ssh: NodeSSH) => {
-  restartPath = ompatiblePath(restartPath);
-  remoteFilePath = ompatiblePath(remoteFilePath);
   const spinner = ora({
     text: chalk.yellowBright(`正在检查服务器 ${remoteFilePath} 文件是否有效...`)
   }).start();
   try {
     const { code, stderr } = await ssh.execCommand(
-      `cd ${ompatiblePath(restartPath)} && ./nginx -t -c ${remoteFilePath}`
+      `cd ${restartPath} && ./nginx -t -c ${remoteFilePath}`
     );
     if (code === 0 && stderr.includes('test is successful')) {
       spinner.succeed(chalk.greenBright(`服务器 ${chalk.cyan(remoteFilePath)} 文件配置无误`));
@@ -374,7 +372,7 @@ const onCheckNginxConfig = async (remoteFilePath: string, restartPath: string, s
 // 校验服务器文件是否存在
 export const checkFileExistence = async (url: string, ssh: NodeSSH) => {
   try {
-    const res = await ssh.execCommand(`ls ${ompatiblePath(url)}`);
+    const res = await ssh.execCommand(`ls ${url}`);
     if (res.code !== 0 && res.stderr) {
       console.error(chalk.redBright(`服务器文件 ${chalk.cyan(path)} - ${res.stderr}`));
       process.exit(1);
@@ -392,14 +390,14 @@ export const onRestartNginx = async (remoteFilePath: string, restartPath: string
     text: chalk.yellowBright('正在重启 nginx 服务...')
   }).start();
   try {
-    await ssh.execCommand(`cd ${ompatiblePath(restartPath)} && ./nginx -s reload`);
-    spinner.succeed(chalk.greenBright(`nginx 服务已重启: ${ompatiblePath(restartPath)}`));
+    await ssh.execCommand(`cd ${restartPath} && ./nginx -s reload`);
+    spinner.succeed(chalk.greenBright(`nginx 服务已重启: ${restartPath}`));
     if (verifyFile(`${process.cwd()}/nginx.conf`)) {
       await onRemoveFile(`${process.cwd()}/nginx.conf`);
     }
     console.log(
       `\n${beautyLog.success}`,
-      chalk.greenBright(`${chalk.bold(`🎉 🎉 🎉 nginx 服务重启成功 ${ompatiblePath(restartPath)} 🎉 🎉 🎉`)}\n`)
+      chalk.greenBright(`${chalk.bold(`🎉 🎉 🎉 nginx 服务重启成功 ${restartPath} 🎉 🎉 🎉`)}\n`)
     );
   } catch (error) {
     spinner.fail(chalk.redBright(`重启 nginx 服务失败: ${error}`));

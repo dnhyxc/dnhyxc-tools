@@ -9,7 +9,6 @@ const ssh = new NodeSSH();
 
 // 读取 ngnix 配置
 const onReadNginxConfig = async (remotePath: string, localFileName: string) => {
-  remotePath = ompatiblePath(remotePath);
   localFileName = ompatiblePath(localFileName);
   const spinner = ora({
     text: chalk.yellowBright(`正在读取远程 ${chalk.cyan(`${remotePath}`)} 文件...`)
