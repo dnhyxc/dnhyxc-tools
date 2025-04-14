@@ -1,6 +1,6 @@
 module.exports = {
   types: [
-    { value: 'feature', name: 'feature: 增加新功能' },
+    { value: 'feat', name: 'feature: 增加新功能' },
     {
       value: 'chore',
       name: 'chore: 构建过程或辅助工具的变动(更改配置文件)'
