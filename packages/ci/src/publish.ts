@@ -242,9 +242,7 @@ export const publish = async (projectName: string, options: Omit<Options, 'isSer
   const isService = getPublishConfigInfo(publishConfig, projectName, 'isServer');
 
   const localPath =
-    _localFilePath ||
-    (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
-    `${process.cwd()}`;
+    _localFilePath || getPublishConfigInfo(publishConfig, projectName, 'localFilePath') || `${process.cwd()}`;
 
   // 发布配置中 isServer 配置存在时，直接校验
   if (localPath && (isService !== undefined || _isServer !== undefined)) {
@@ -264,9 +262,9 @@ export const publish = async (projectName: string, options: Omit<Options, 'isSer
       !isVerified &&
         onVerifyFile(
           _localFilePath ||
-          options.localFilePath ||
-          (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
-          process.cwd(),
+            options.localFilePath ||
+            (getPublishConfigInfo(publishConfig, projectName, 'localFilePath') as string) ||
+            process.cwd(),
           _isServer === 'true' || options.isServer || !!isService
         );
 
@@ -309,8 +307,8 @@ export const publish = async (projectName: string, options: Omit<Options, 'isSer
           name: 'isServer',
           type:
             _isServer !== undefined ||
-              _install ||
-              getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
+            _install ||
+            getPublishConfigInfo(publishConfig, projectName, 'isServer', true) !== undefined
               ? null
               : 'toggle',
           message: '是否是后台服务:',

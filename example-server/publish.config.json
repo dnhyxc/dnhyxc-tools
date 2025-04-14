@@ -13,7 +13,10 @@
   },
   "exampleServer": {
     "name": "server",
-    "localFilePath": "/Users/dnhyxc/Documents/code/dnhyxc-tools/example-server",
+    "localFilePath": {
+      "win": "E:\\code\\dnhyxc-tools\\example-server",
+      "mac": "/Users/dnhyxc/Documents/code/dnhyxc-tools/example-server"
+    },
     "remoteFilePath": "/usr/local/example-server",
     "isServer": true
   }

@@ -12,7 +12,8 @@ import {
   ProjectInfo,
   ServerInfo,
   NginxInfo,
-  ServiceInfo
+  ServiceInfo,
+  LocalFilePath
 } from './types';
 
 const isUnicodeSupported = () => {
@@ -145,13 +146,15 @@ export const getPublishConfigInfo = (
   projectName: string,
   field: string,
   message?: boolean
-): string | boolean | undefined => {
-  const value = publishConfig?.[projectName]?.[
-    field as keyof (ProjectInfo | ServerInfo | NginxInfo | ServiceInfo)
-  ] as string;
+) => {
+  const value = publishConfig?.[projectName]?.[field as keyof (ProjectInfo | ServerInfo | NginxInfo | ServiceInfo)];
   if (field === 'isServer' && value !== undefined) {
     return value;
   } else if (value) {
+    // 如果字段是 localFilePath 本地路径，根据操作系统返回不同的值
+    if (field === 'localFilePath') {
+      return process.platform === 'win32' ? (value as LocalFilePath).win : (value as LocalFilePath).mac;
+    }
     return value;
   } else {
     message &&
@@ -204,8 +207,8 @@ export const onCollectServerInfo = async ({
           name: 'nginxRemoteFilePath',
           type:
             nginxRemoteFilePath ||
-              getPublishConfigInfo(publishConfig, 'nginxInfo', 'remoteFilePath', projectName !== 'node') ||
-              projectName === 'node'
+            getPublishConfigInfo(publishConfig, 'nginxInfo', 'remoteFilePath', projectName !== 'node') ||
+            projectName === 'node'
               ? null
               : 'text',
           message: '服务器 nginx.conf 文件路径:',
@@ -222,16 +225,16 @@ export const onCollectServerInfo = async ({
           name: 'nginxRestartPath',
           type:
             nginxRestartPath ||
-              getPublishConfigInfo(
-                publishConfig,
-                'nginxInfo',
-                'restartPath',
-                (command !== 'pull' && projectName === 'nginx') || command === 'push' // 判断是否需要提示
-              ) ||
-              (!nginxRestartPath &&
-                !getPublishConfigInfo(publishConfig, 'nginxInfo', 'restartPath') &&
-                command === 'pull') ||
-              projectName === 'node'
+            getPublishConfigInfo(
+              publishConfig,
+              'nginxInfo',
+              'restartPath',
+              (command !== 'pull' && projectName === 'nginx') || command === 'push' // 判断是否需要提示
+            ) ||
+            (!nginxRestartPath &&
+              !getPublishConfigInfo(publishConfig, 'nginxInfo', 'restartPath') &&
+              command === 'pull') ||
+            projectName === 'node'
               ? null
               : 'text',
           message: '服务器 nginx 重启路径:',
@@ -248,16 +251,16 @@ export const onCollectServerInfo = async ({
           name: 'serviceRestartPath',
           type:
             serviceRestartPath ||
-              getPublishConfigInfo(
-                publishConfig,
-                'serviceInfo',
-                'restartPath',
-                command === 'restart' && projectName === 'node' // 判断是否需要提示
-              ) ||
-              (!serviceRestartPath &&
-                !getPublishConfigInfo(publishConfig, 'serviceInfo', 'restartPath') &&
-                command !== 'restart') ||
-              projectName === 'nginx'
+            getPublishConfigInfo(
+              publishConfig,
+              'serviceInfo',
+              'restartPath',
+              command === 'restart' && projectName === 'node' // 判断是否需要提示
+            ) ||
+            (!serviceRestartPath &&
+              !getPublishConfigInfo(publishConfig, 'serviceInfo', 'restartPath') &&
+              command !== 'restart') ||
+            projectName === 'nginx'
               ? null
               : 'text',
           message: '服务器 node 重启路径:',
@@ -354,9 +357,7 @@ const onCheckNginxConfig = async (remoteFilePath: string, restartPath: string, s
     text: chalk.yellowBright(`正在检查服务器 ${remoteFilePath} 文件是否有效...`)
   }).start();
   try {
-    const { code, stderr } = await ssh.execCommand(
-      `cd ${restartPath} && ./nginx -t -c ${remoteFilePath}`
-    );
+    const { code, stderr } = await ssh.execCommand(`cd ${restartPath} && ./nginx -t -c ${remoteFilePath}`);
     if (code === 0 && stderr.includes('test is successful')) {
       spinner.succeed(chalk.greenBright(`服务器 ${chalk.cyan(remoteFilePath)} 文件配置无误`));
     } else {

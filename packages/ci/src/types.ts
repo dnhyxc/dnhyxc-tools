@@ -33,9 +33,14 @@ export interface ServiceInfo {
   restartPath: string;
 }
 
+export interface LocalFilePath {
+  win: string;
+  mac: string;
+}
+
 export interface ProjectInfo {
   name: string;
-  localFilePath: string;
+  localFilePath: LocalFilePath;
   remoteFilePath: string;
   isServer: boolean;
 }
