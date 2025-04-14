@@ -56,31 +56,46 @@ npx dnhyxc-ci publish projectName
   },
   "dnhyxc": {
     "name": "dnhyxc",
-    "localFilePath": "/Users/dnhyxc/Documents/code/dnhyxc",
+    "localFilePath": {
+      "win": "E:\\code\\dnhyxc",
+      "mac": "/Users/dnhyxc/Documents/code/dnhyxc"
+    },
     "remoteFilePath": "/usr/local/nginx/dnhyxc",
     "isServer": false
   },
   "example": {
     "name": "dnhyxc",
-    "localFilePath": "/Users/dnhyxc/Documents/code/dnhyxc",
+    "localFilePath": {
+      "win": "E:\\code\\dnhyxc-tools\\example",
+      "mac": "/Users/dnhyxc/Documents/dnhyxc-tools/example"
+    },
     "remoteFilePath": "/usr/local/nginx/dnhyxc",
     "isServer": false
   },
   "blogClientWeb": {
     "name": "html",
-    "localFilePath": "/Users/dnhyxc/Documents/code/blog-client-web",
+    "localFilePath": {
+      "win": "E:\\code\\blog-client-web",
+      "mac": "/Users/dnhyxc/Documents/code/blog-client-web"
+    },
     "remoteFilePath": "/usr/local/nginx/html",
     "isServer": false
   },
   "blogAdminWeb": {
     "name": "admin_html",
-    "localFilePath": "/Users/dnhyxc/Documents/code/blog-admin-web",
+    "localFilePath": {
+      "win": "E:\\code\\blog-admin-web",
+      "mac": "/Users/dnhyxc/Documents/code/blog-admin-web"
+    },
     "remoteFilePath": "/usr/local/nginx/html_admin",
     "isServer": false
   },
   "blogServerWeb": {
     "name": "server",
-    "localFilePath": "/Users/dnhyxc/Documents/code/blog-server-web",
+    "localFilePath": {
+      "win": "E:\\code\\blog-server-web",
+      "mac": "/Users/dnhyxc/Documents/code/blog-server-web"
+    },
     "remoteFilePath": "/usr/local/server",
     "isServer": true
   }
