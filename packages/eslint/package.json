@@ -1,0 +1,37 @@
+{
+  "name": "@dnhyxc/eslint",
+  "version": "0.0.5",
+  "type": "module",
+  "main": "index.mjs",
+  "files": [
+    "index.mjs",
+    "README.md"
+  ],
+  "keywords": [
+    "eslint"
+  ],
+  "author": "@dnhyxc",
+  "license": "ISC",
+  "description": "ESLint configuration",
+  "dependencies": {
+    "@eslint/js": "^9.30.1",
+    "@typescript-eslint/eslint-plugin": "^8.35.1",
+    "@typescript-eslint/parser": "^8.35.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-vue": "^9.25.0",
+    "globals": "^16.3.0",
+    "vue-eslint-parser": "^10.2.0"
+  },
+  "peerDependencies": {
+    "@eslint/js": "^9.30.1",
+    "@typescript-eslint/eslint-plugin": "^8.35.1",
+    "@typescript-eslint/parser": "^8.35.1",
+    "eslint": ">=8.0.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-vue": "^9.25.0",
+    "globals": "^16.3.0",
+    "vue-eslint-parser": "^10.2.0"
+  }
+}
