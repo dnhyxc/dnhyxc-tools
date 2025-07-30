@@ -42,7 +42,7 @@ export const vueConfig = {
   },
   plugins: { vue: vuePlugin },
   rules: {
-    ...vuePlugin.configs['vue3-recommended'].rules,
+    ...(vuePlugin.configs?.recommended?.rules || {}),
     'vue/multi-word-component-names': 'off',
     'vue/no-v-html': 'off'
   }
@@ -58,7 +58,7 @@ export const tsConfig = {
     parserOptions: { ecmaFeatures: { jsx: false } }
   },
   rules: {
-    ...tsEslintPlugin.configs.recommended.rules,
+    ...(tsEslintPlugin.configs?.recommended?.rules || {}),
     '@typescript-eslint/no-confusing-non-null-assertion': 2,
     '@typescript-eslint/ban-ts-comment': 0
   },
@@ -70,9 +70,21 @@ export const ignoresConfig = {
   ignores: ['node_modules/**']
 };
 
+// 检查配置中是否包含指定的部分
+const hasConfigPart = (configParts, type) => {
+  return Object.prototype.hasOwnProperty.call(configParts, type)
+}
+
+// 从配置中解构并设置默认值
+const getConfigValue = (configParts, key, defaultValue) => (
+  hasConfigPart(configParts, key) ? configParts[key] : defaultValue
+);
+
 /**
  * 创建 ESLint 配置
  * @param {object} [configParts={}] - 用于覆盖或添加的配置部分
+ * @param {object} [configParts.recommended] - 覆盖 eslint.configs.recommended 配置
+ * @param {object} [configParts.prettier] - 在末尾添加额外的 Prettier 配置
  * @param {object} [configParts.global] - 覆盖默认的全局配置
  * @param {object} [configParts.vue] - 覆盖默认的 Vue 配置
  * @param {object} [configParts.ts] - 覆盖默认的 TypeScript 配置
@@ -82,22 +94,24 @@ export const ignoresConfig = {
  */
 export function createEslintConfig(configParts = {}) {
   const {
-    global = globalConfig,
-    vue = vueConfig,
-    ts = tsConfig,
-    ignores = ignoresConfig,
-    custom = []
+    recommended = getConfigValue(configParts, 'recommended', eslintRecommendedConfig),
+    prettier = getConfigValue(configParts, 'prettier', prettierConfig),
+    global = getConfigValue(configParts, 'global', globalConfig),
+    vue = getConfigValue(configParts, 'vue', vueConfig),
+    ts = getConfigValue(configParts, 'ts', tsConfig),
+    ignores = getConfigValue(configParts, 'ignores', ignoresConfig),
+    custom = getConfigValue(configParts, 'custom', [])
   } = configParts;
 
   return [
-    prettierConfig,
-    eslintRecommendedConfig,
+    recommended,
+    prettier,
     global,
     vue,
     ts,
     ignores,
     ...custom
-  ].filter(Boolean); // 过滤掉可能为 null 或 undefined 的配置项
+  ].filter(Boolean) // 过滤掉 falsy 值（false、null、undefined、0、''、NaN）
 }
 
 // 默认导出一个基础配置实例

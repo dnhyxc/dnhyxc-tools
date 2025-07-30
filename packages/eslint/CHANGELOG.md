@@ -1,5 +1,29 @@
 # @dnhyxc/eslint
 
+## 0.0.9
+
+### Patch Changes
+
+- feat: 优化代码
+
+## 0.0.8
+
+### Patch Changes
+
+- feat: 完善createEslintConfig方法
+
+## 0.0.7
+
+### Patch Changes
+
+- feat: 处理默认值
+
+## 0.0.6
+
+### Patch Changes
+
+- feat: 优化配置，增加 prettier 配置的自定义
+
 ## 0.0.5
 
 ### Patch Changes

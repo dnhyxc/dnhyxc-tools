@@ -103,15 +103,15 @@ export default createEslintConfig({
 
 #### 使用示例 3
 
-禁用 Vue 或 TypeScript：如果您的项目不使用 Vue，您可以将 vue 配置设置为 null 来移除它。
+禁用 Vue 或 TypeScript：如果您的项目不使用 Vue，您可以将 vue 配置设置为 `null` 或 `false` 等一切为 `falsy` 的值。
 
 ```js
 import { createEslintConfig } from '@dnhyxc/eslint';
 
 // 一个没有 Vue 的 Node.js + TypeScript 项目
 export default createEslintConfig({
-  vue: null,
-  ts: null
+  vue: false,
+  ts: false
 });
 ```
 
@@ -154,5 +154,17 @@ const customIgnores = {
 
 export default createEslintConfig({
   ignores: customIgnores
+});
+```
+
+#### 使用示例 6
+
+自定义 Prettier 配置：如果您不想要 `prettier` 推荐配置，可以将其设置为 `null` 或 `false` 等一切为 `falsy` 的值。
+
+```js
+import { createEslintConfig } from '@dnhyxc/eslint';
+
+export default createEslintConfig({
+  prettier: false // 禁用 Prettier
 });
 ```
