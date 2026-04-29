@@ -1,5 +1,11 @@
 # dnhyxc-ci
 
+## 1.0.5
+
+### Patch Changes
+
+- 增加 pm2 自定义服务重启脚本参数
+
 ## 1.0.4
 
 ### Patch Changes

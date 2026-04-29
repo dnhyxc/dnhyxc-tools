@@ -194,7 +194,10 @@ dnhyxc-ci push -nrp  # 携带远程 nginx 重启路径。
 通过 `dnhyxc-ci restart <serviceName>` 命令重启 nginx 或 node 服务。
 
 ```yaml
-dnhyxc-ci restart serviceName
+dnhyxc-ci restart serviceName<[node | nginx]>
+
+# 如果不传 -rsc "pm2 restart main" 参数，默认为 pm2 restart 0
+dnhyxc-ci restart node -rsc "pm2 restart main"
 ```
 
 #### dnhyxc-ci restart 相关命令说明
