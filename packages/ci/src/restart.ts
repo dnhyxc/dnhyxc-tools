@@ -20,19 +20,21 @@ const onRestart = async ({
   projectName,
   nginxRemoteFilePath,
   nginxRestartPath,
-  serviceRestartPath
+  serviceRestartPath,
+  restartScript
 }: Pick<Options, 'host' | 'port' | 'username' | 'password'> & {
   projectName: string;
   nginxRemoteFilePath: string;
   nginxRestartPath: string;
   serviceRestartPath: string;
+  restartScript?: string;
 }) => {
   try {
     await onConnectServer({ host, port, username, password, ssh });
     if (projectName === 'nginx') {
       await onRestartNginx(`${nginxRemoteFilePath}/nginx.conf`, nginxRestartPath, ssh);
     } else if (projectName === 'node') {
-      await onRestartServer(serviceRestartPath, ssh);
+      await onRestartServer(serviceRestartPath, ssh, restartScript);
     } else {
       console.log(beautyLog.error, chalk.red(`暂不支持 ${projectName} 服务的重启`));
       process.exit(1);
@@ -52,7 +54,8 @@ export const restart = async (projectName: string, option: CollectInfoParams) =>
     password: _password,
     nginxRemoteFilePath: _nginxRemoteFilePath,
     nginxRestartPath: _nginxRestartPath,
-    serviceRestartPath: _serviceRestartPath
+    serviceRestartPath: _serviceRestartPath,
+    restartScript: _restartScript
   } = option;
 
   const publishConfig = getPublishConfig();
@@ -67,10 +70,12 @@ export const restart = async (projectName: string, option: CollectInfoParams) =>
     nginxRemoteFilePath: _nginxRemoteFilePath,
     nginxRestartPath: _nginxRestartPath,
     serviceRestartPath: _serviceRestartPath,
+    restartScript: _restartScript,
     command: 'restart'
   });
 
-  const { host, port, username, password, nginxRemoteFilePath, nginxRestartPath, serviceRestartPath } = result;
+  const { host, port, username, password, nginxRemoteFilePath, nginxRestartPath, serviceRestartPath, restartScript } =
+    result;
 
   await onRestart({
     host: host || _host || publishConfig?.serverInfo?.host,
@@ -80,6 +85,7 @@ export const restart = async (projectName: string, option: CollectInfoParams) =>
     projectName,
     nginxRemoteFilePath: nginxRemoteFilePath || _nginxRemoteFilePath || publishConfig?.nginxInfo?.remoteFilePath,
     nginxRestartPath: nginxRestartPath || _nginxRestartPath || publishConfig?.nginxInfo?.restartPath,
-    serviceRestartPath: serviceRestartPath || _serviceRestartPath || publishConfig?.serviceInfo?.restartPath
+    serviceRestartPath: serviceRestartPath || _serviceRestartPath || publishConfig?.serviceInfo?.restartPath,
+    restartScript: restartScript || _restartScript || publishConfig?.restartScript
   });
 };

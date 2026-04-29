@@ -1,10 +1,40 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 // import { describe, expect, it, vi } from 'vitest';
 import { publish } from '../src/publish';
+import { onRestartServer } from '../src/utils';
 
 describe('core publish', () => {
   it('should test publish', () => {
     expect(publish);
+  });
+});
+
+describe('core restart', () => {
+  it('restartScript 为空时应兜底 pm2 restart 0', async () => {
+    const execCommand = vi.fn(async (cmd: string) => {
+      if (cmd === 'pm2 list') return { code: 0, stdout: 'ok', stderr: '' };
+      return { code: 0, stdout: '', stderr: '' };
+    });
+
+    const ssh = { execCommand } as any;
+
+    await onRestartServer('/test/path', ssh, '');
+    expect(execCommand).toHaveBeenNthCalledWith(1, 'pm2 restart 0');
+    expect(execCommand).toHaveBeenNthCalledWith(2, 'pm2 list');
+  });
+
+  it('restartScript 有值时应执行传入命令', async () => {
+    const execCommand = vi.fn(async (cmd: string) => {
+      if (cmd === 'pm2 list') return { code: 0, stdout: 'ok', stderr: '' };
+      return { code: 0, stdout: '', stderr: '' };
+    });
+
+    const ssh = { execCommand } as any;
+    const restartScript = 'pm2 restart server';
+
+    await onRestartServer('/test/path', ssh, restartScript);
+    expect(execCommand).toHaveBeenNthCalledWith(1, restartScript);
+    expect(execCommand).toHaveBeenNthCalledWith(2, 'pm2 list');
   });
 });
 

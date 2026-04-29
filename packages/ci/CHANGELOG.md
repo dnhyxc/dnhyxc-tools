@@ -1,5 +1,17 @@
 # dnhyxc-ci
 
+## 1.0.4
+
+### Patch Changes
+
+- 增加 🖥️
+
+## 1.0.3
+
+### Patch Changes
+
+- 增加自定义重启服务的脚本 pm2 restart server
+
 ## 1.0.2
 
 ### Patch Changes

@@ -126,6 +126,7 @@ program
   .option('-ncp, --nginxRemoteFilePath [nginxRemoteFilePath]', '输入服务器 nginx.conf 文件路径，必须以 / 开头')
   .option('-nrp, --nginxRestartPath [nginxRestartPath]', '输入服务器 nginx 重启路径，必须以 / 开头')
   .option('-srp, --serviceRestartPath [serviceRestartPath]', '输入服务器 node 重启路径，必须以 / 开头')
+  .option('-rsc, --restartScript [restartScript]', 'node 服务重启命令，如 pm2 restart server')
   .action((serviceName, option) => {
     const validatedServiceName = validateServiceName(serviceName);
     if (option?.nginxRemoteFilePath && !isValidFilePath(option?.nginxRemoteFilePath)) {

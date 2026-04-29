@@ -188,8 +188,9 @@ const onPublish = async ({
   localFilePath,
   remoteFilePath,
   install,
-  isServer
-}: Options) => {
+  isServer,
+  restartScript
+}: Options & { restartScript?: string }) => {
   try {
     await onConnectServer({
       host,
@@ -211,7 +212,7 @@ const onPublish = async ({
       await onInstall(remoteFilePath);
     }
     if (isServer) {
-      await onRestartServer(remoteFilePath, ssh);
+      await onRestartServer(remoteFilePath, ssh, restartScript);
     }
   } catch (err) {
     console.log(`\n${beautyLog.error}`, chalk.red(`部署失败: ${err}`));
@@ -371,6 +372,7 @@ export const publish = async (projectName: string, options: Omit<Options, 'isSer
       _remoteFilePath ||
       (getPublishConfigInfo(publishConfig, projectName, 'remoteFilePath') as string),
     install: install || _install,
-    isServer: _isServer ? _isServer === 'true' : isServer || !!isService
+    isServer: _isServer ? _isServer === 'true' : isServer || !!isService,
+    restartScript: publishConfig?.restartScript
   });
 };

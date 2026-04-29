@@ -54,6 +54,7 @@ npx dnhyxc-ci publish projectName
   "serviceInfo": {
     "restartPath": "/usr/local/server"
   },
+  "restartScript": "pm2 restart server",
   "dnhyxc": {
     "name": "dnhyxc",
     "localFilePath": {
@@ -212,6 +213,8 @@ dnhyxc-ci restart <serviceName> -ncp  # 携带远程 nginx 配置文件路径。
 dnhyxc-ci restart <serviceName> -nrp  # 携带服务器 nginx 重启路径。
 
 dnhyxc-ci restart <serviceName> -srp  # 携带服务器 node 重启路径。
+
+dnhyxc-ci restart <serviceName> -rsc  # 携带 node 服务重启命令，如 pm2 restart server。
 ```
 
 ### 查看 node 服务相关进程的状态和日志信息

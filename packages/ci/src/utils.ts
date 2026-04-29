@@ -177,7 +177,8 @@ export const onCollectServerInfo = async ({
   command,
   nginxRemoteFilePath,
   nginxRestartPath,
-  serviceRestartPath
+  serviceRestartPath,
+  restartScript
 }: CollectInfoParams) => {
   try {
     return await prompts(
@@ -266,6 +267,18 @@ export const onCollectServerInfo = async ({
           message: '服务器 node 重启路径:',
           initial: getPublishConfigInfo(publishConfig, 'serviceInfo', 'restartPath') || '',
           validate: (value) => (isValidFilePath(value) ? true : '输入的服务器 node 重启路径必须以 / 开头')
+        },
+        {
+          name: 'restartScript',
+          type:
+            command === 'restart' && projectName === 'node'
+              ? restartScript || publishConfig?.restartScript
+                ? null
+                : 'text'
+              : null,
+          message: 'node 服务重启命令（例如 pm2 restart server）:',
+          initial: restartScript || publishConfig?.restartScript || '',
+          validate: (value) => (value ? true : '请输入 node 服务重启命令')
         },
         {
           name: 'password',
@@ -407,12 +420,13 @@ export const onRestartNginx = async (remoteFilePath: string, restartPath: string
 };
 
 // 重启后台项目
-export const onRestartServer = async (remotePath: string, ssh: NodeSSH) => {
+export const onRestartServer = async (remotePath: string, ssh: NodeSSH, restartScript?: string) => {
   const spinner = ora({
     text: chalk.yellowBright(chalk.cyan('正在重启服务...'))
   }).start();
   try {
-    const { code: restartCode, stderr: restartStderr } = await ssh.execCommand('pm2 restart 0');
+    const restartCommand = restartScript?.trim() ? restartScript : 'pm2 restart 0';
+    const { code: restartCode, stderr: restartStderr } = await ssh.execCommand(restartCommand);
     const { code: listCode, stdout } = await ssh.execCommand('pm2 list');
     if (restartCode === 0 && listCode === 0) {
       spinner.succeed(chalk.greenBright(`服务启动成功: \n${stdout}`));
@@ -421,7 +435,7 @@ export const onRestartServer = async (remotePath: string, ssh: NodeSSH) => {
         chalk.greenBright(`${chalk.bold(`🎉 🎉 🎉 node 服务重启成功: ${chalk.cyan(`${remotePath}`)}!!! 🎉 🎉 🎉 \n`)}`)
       );
     } else {
-      spinner.fail(chalk.redBright(`服务启动失败: ${restartStderr}`));
+      spinner.fail(chalk.redBright(`服务启动失败: ${restartStderr || restartCommand}`));
       process.exit(1);
     }
   } catch (error) {

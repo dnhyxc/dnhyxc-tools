@@ -16,6 +16,7 @@ export interface CollectInfoParams extends Partial<Options> {
   projectName?: string;
   nginxRestartPath?: string;
   serviceRestartPath?: string;
+  restartScript?: string;
 }
 
 export interface ServerInfo {
@@ -49,7 +50,10 @@ export interface PublishConfigParams {
   serverInfo: ServerInfo;
   nginxInfo: NginxInfo;
   serviceInfo: ServiceInfo;
-  [projectName: string]: ProjectInfo | ServerInfo | NginxInfo | ServiceInfo;
+  // 根级字段：用于 node 服务重启时执行的命令，如 "pm2 restart server"
+  restartScript?: string;
+  // 兼容其他项目配置（例如 dnhyxc、example 等）
+  [projectName: string]: ProjectInfo | ServerInfo | NginxInfo | ServiceInfo | string | undefined;
 }
 
 export type ConfigType = keyof PublishConfigParams;
